@@ -2,8 +2,9 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>网格拼贴海报生成器</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23191a17'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%23c9f719'/%3E%3C/svg%3E">
 <style>
   :root{ --paper:#efefec; --panel:#f7f7f4; --ink:#141414; --mut:#8d8d86; --line:#d9d9d2 }
   *{box-sizing:border-box;margin:0}
@@ -97,12 +98,35 @@
     .modal{padding:12px}
   }
 </style>
+<link rel="stylesheet" href="ui-shell.css">
+<style>
+  :root{--lab-panel-width:320px}
+  .side{padding:0}
+  .app-controls{padding:4px 20px 24px}
+  .app-actions{grid-auto-flow:row;grid-template-columns:1fr 1fr}
+  .app-actions .lab-action{min-height:62px}
+  .foot{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+  .stage{display:block;padding:0}
+  .lab-stage__body{display:grid;padding:calc(var(--lab-header-height) + 28px) 28px 28px}
+  .modal{z-index:90}
+  @media(max-width:760px){
+    .app-controls{padding:4px 19px 24px}
+    .lab-stage__body{padding:calc(var(--lab-header-height) + 14px) 12px 12px}
+    canvas#out{max-height:calc(48vh - 72px)}
+    body.panel-collapsed canvas#out{max-height:calc(100vh - 88px)}
+  }
+</style>
 </head>
-<body>
-  <aside class="side">
-    <h1>网格拼贴海报生成器</h1>
+<body class="lab-app">
+  <a class="lab-skip-link" href="#stage">跳到画布</a>
+  <aside class="lab-panel side" id="control-panel" aria-label="网格拼贴参数面板">
+    <header class="lab-panel__header">
+      <div class="lab-edition">FORMULA / 006</div>
+      <h1>网格拼贴海报生成器</h1>
+      <p>把文字与图片编入同一套模块网格，生成可复现的海报版式。</p>
+    </header>
 
-    <hr class="rule">
+    <div class="lab-panel__scroll"><div class="app-controls">
 
     <div class="ctl">
       <label for="text">文案 <output>空行分块</output></label>
@@ -194,15 +218,6 @@ OUT</textarea>
       <input type="text" id="seed" spellcheck="false" inputmode="numeric">
     </div>
 
-    <div class="btnrow">
-      <label class="btn" for="file">上传图片</label>
-      <input type="file" id="file" accept="image/*" multiple hidden>
-      <button class="btn" id="reroll">换一批</button>
-    </div>
-    <div class="btnrow">
-      <button class="btn primary" id="save">导出 PNG</button>
-      <button class="btn" id="code">导出代码</button>
-    </div>
     <div class="foot" id="hint">
       拖多张图片进来按顺序填格<br>
       拖到某一格上 = 从那格开始填<br>
@@ -210,10 +225,25 @@ OUT</textarea>
       <a href="https://x.com/Formulasearch" target="_blank">@Formulasearch</a> ·
       <a href="https://github.com/FANzR-arch/Phil-aesthetic-formulas" target="_blank">仓库</a>
     </div>
+    </div></div>
+
+    <footer class="lab-panel__actions app-actions">
+      <label class="lab-action" for="file"><span>上传图片</span><small>可多选</small></label>
+      <input type="file" id="file" accept="image/*" multiple hidden>
+      <button class="lab-action" id="reroll"><span>换一批</span><small>重新排布</small></button>
+      <button class="lab-action lab-action--accent" id="save"><span>导出</span><small>PNG</small></button>
+      <button class="lab-action" id="code"><span>代码</span><small>HTML / React</small></button>
+    </footer>
   </aside>
 
-  <main class="stage" id="stage">
-    <canvas id="out"></canvas>
+  <button class="lab-panel-toggle" type="button" data-lab-panel-toggle aria-controls="control-panel" aria-expanded="true"><span aria-hidden="true">←</span></button>
+
+  <main class="lab-stage stage" id="stage">
+    <header class="lab-stage__header">
+      <a class="lab-stage__id lab-gallery-link" href="../../" aria-label="返回全部项目"><i></i><span>ALL PROJECTS</span></a>
+      <div class="lab-stage__meta"><span>GRID SYSTEM</span><span>READY</span></div>
+    </header>
+    <div class="lab-stage__body"><canvas id="out"></canvas></div>
   </main>
 
   <div class="modal" id="modal">
@@ -234,6 +264,7 @@ OUT</textarea>
   </div>
 
 <script src="grid-collage.js"></script>
+<script src="ui-shell.js"></script>
 <script>
 'use strict';
 

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>虹彩液态网点实验器</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111111'/%3E%3Ccircle cx='22' cy='24' r='14' fill='%236fffe9'/%3E%3Ccircle cx='42' cy='40' r='16' fill='%23ff82c8'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="ui-shell.css">
+    <link rel="stylesheet" href="styles.css">
+
+    <meta property="og:title" content="Liquid Shape Distortions" />
+    <meta property="og:description" content="psychedelic animation generator; (p)art of your next trip" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://collidingscopes.github.io/liquid-shape-distortions" />
+    <meta property="og:image" content="https://collidingscopes.github.io/liquid-shape-distortions/assets/siteOGImage2.png">
+    <meta property="og:image:type" content="image/png" >
+    <meta property="og:image:width" content="1622" >
+    <meta property="og:image:height" content="1622" >
+
+
+</head>
+<body class="lab-app">
+    <a class="lab-skip-link" href="#canvas">跳到画布</a>
+    <aside id="control-panel" class="lab-panel" aria-label="虹彩液态控制台">
+      <header class="lab-panel__header panel-header">
+        <div class="edition">FORMULA / 007</div>
+        <h1>Liquid Screen Lab</h1>
+        <p>虹彩液态 &amp; 丝网错版生成器</p>
+      </header>
+
+      <div class="lab-panel__scroll panel-scroll">
+        <section class="lab-section control-section composition-section" aria-labelledby="composition-title">
+          <div class="lab-section__heading section-heading">
+            <span>01</span>
+            <h2 id="composition-title">构图基准</h2>
+          </div>
+
+          <div class="seed-row">
+            <label for="seed-input">Seed</label>
+            <button id="seed-prev" class="step-button" type="button" aria-label="上一个种子">−</button>
+            <input id="seed-input" type="number" min="0" max="99999" step="1" value="937">
+            <button id="seed-next" class="step-button" type="button" aria-label="下一个种子">＋</button>
+          </div>
+          <p class="field-note">种子与全部参数都会保留；相同数值始终生成相同构图。</p>
+
+          <div class="format-grid" aria-label="画布比例">
+            <button type="button" data-format="square">1:1</button>
+            <button type="button" data-format="poster" class="active">4:5</button>
+            <button type="button" data-format="story">9:16</button>
+            <button type="button" data-format="wide">16:9</button>
+          </div>
+        </section>
+
+        <section class="lab-section control-section preset-section" aria-labelledby="preset-title">
+          <div class="lab-section__heading section-heading">
+            <span>02</span>
+            <h2 id="preset-title">配方</h2>
+          </div>
+          <div id="preset-list" class="preset-list"></div>
+        </section>
+
+        <div id="control-groups"></div>
+
+        <section class="control-group archive-section" aria-labelledby="archive-title">
+          <details id="archive-details">
+            <summary>
+              <span class="group-index">07</span>
+              <strong id="archive-title">参数存档</strong>
+              <em id="saved-count" class="saved-count">0</em>
+            </summary>
+            <div class="archive-body">
+              <div id="saved-recipes" class="saved-recipes" aria-live="polite"></div>
+              <div class="archive-import">
+                <label for="parameter-json">导入 JSON</label>
+                <textarea id="parameter-json" rows="5" spellcheck="false" placeholder="粘贴复制的参数 JSON"></textarea>
+                <button id="import-parameters-button" type="button">导入并保存</button>
+              </div>
+            </div>
+          </details>
+        </section>
+      </div>
+
+      <footer class="lab-panel__actions panel-actions">
+        <button id="nudge-button" class="lab-action lab-action--accent action-button accent" type="button"><span>抽奖</span><small>随机整套效果</small></button>
+        <button id="save-parameters-button" class="lab-action action-button" type="button"><span>保存</span><small>收藏当前参数</small></button>
+        <button id="reset-button" class="lab-action action-button" type="button"><span>复位</span><small>回到当前配方</small></button>
+        <button id="copy-button" class="lab-action action-button" type="button"><span>复制参数</span><small>JSON</small></button>
+      </footer>
+    </aside>
+
+    <button id="panel-toggle" class="lab-panel-toggle plain-button panel-toggle" data-lab-panel-toggle type="button" aria-label="收起参数面板" aria-controls="control-panel" aria-expanded="true">
+      <span aria-hidden="true">←</span>
+    </button>
+
+    <header id="stage-header" class="lab-stage__header">
+      <a class="lab-stage__id lab-gallery-link stage-id" href="../../" aria-label="返回全部项目"><i></i><span>ALL PROJECTS</span></a>
+      <div class="lab-stage__meta stage-meta">
+        <span id="active-preset">BLACK / IRIS</span>
+        <span id="seed-readout">SEED 937</span>
+        <span id="fpsIndicator">FPS —</span>
+      </div>
+    </header>
+
+    <nav id="stage-actions" aria-label="画布操作">
+      <button id="playPauseBtn" type="button" title="播放或暂停 (Space)"><span class="action-icon">Ⅱ</span><b>暂停</b></button>
+      <button id="randomizeBtn" type="button" title="随机一个稳定种子 (R)"><span class="action-icon">↻</span><b>换种子</b></button>
+      <button id="saveBtn" type="button" title="导出 PNG (S)"><span class="action-icon">↓</span><b>PNG</b></button>
+      <button id="exportVideoBtn" type="button" title="开始或停止录制 (V)"><span class="action-icon">●</span><b>MP4</b></button>
+      <button id="zen-mode-button" type="button" title="专注模式 (Z)" aria-pressed="false"><span class="action-icon">⌗</span><b>专注</b></button>
+    </nav>
+
+    <div id="canvas-caption">
+      <span>WEBGL / REAL TIME</span>
+      <a href="https://github.com/collidingScopes/liquid-shape-distortions" target="_blank" rel="noopener">OPEN-SOURCE CORE ↗</a>
+    </div>
+
+
+    <div id="intro-overlay">
+        <div id="intro-content">
+          <h1 id="intro-title">虹彩液态网点实验器</h1>
+          <p class="intro-text">
+            复用开源液态 shader，叠加网点丝印与 RGB 错版。
+          </p>
+          <p class="intro-text">右上角 Open Controls 调速度、形变、虹彩、颗粒和网点。</p>
+          <p class="intro-text">🎲 换一组，📷 导出当前画面，Z 隐藏所有控件。</p>
+
+          <div id="hotkeys-section">
+            <ul id="hotkeys-list">
+              <li>↻: random stable seed [r]</li>
+              <li>⏯️: pause/play the animation [space]</li>
+              <li>📷: save a screenshot image [s]</li>
+              <li>🎥: 导出视频 [v]</li>
+            </ul>
+          </div>
+          <button id="start-button">开始</button>
+        </div>
+    </div>
+
+    <div id="gui" class="ui-overlay"></div>
+    <canvas id="canvas"></canvas>
+
+    <div id="zen-mode-container">
+        <button id="legacy-zen-mode-button" class="gui-button icon">[Zen Mode]</button>
+    </div>
+
+    <table id="button-table">
+        <tr>
+            <td>
+              <button id="legacy-randomize-button" class="gui-button icon" title="Randomize Inputs (r)">🎲</button>
+            </td>
+
+            <td>
+                <button id="legacy-play-pause-button" class="gui-button icon" title="Play/Pause (space)">⏯️</button>
+            </td>
+
+            <td>
+              <button id="legacy-save-button" class="gui-button icon" title="Save Image (s)">📷</button>
+            </td>
+
+            <td>
+              <button id="legacy-export-video-button" class="gui-button icon" title="Export Video (v)">🎥</button>
+            </td>
+
+            <td>
+                <a class="gui-button icon source-link" href="https://github.com/collidingScopes/liquid-shape-distortions" target="_blank" rel="noopener" title="上游源码">↗</a>
+            </td>
+        </tr>
+    </table>
+
+    <div id="info-container">
+        <p>Core: <a id="floating-ig-link" href="https://github.com/collidingScopes/liquid-shape-distortions" rel="noopener" target="_blank">Alan Ang / MIT</a></p>
+        <p>Halftone: three.js DotScreenShader / MIT</p>
+        <p id="legacyFpsIndicator" class="ui-overlay">FPS: </p>
+    </div>
+
+    <div id="videoRecordingMessageDiv" class="hidden sticky-top">
+        Video recording underway. Press 🎥 button or "v" to stop. The video will save to your downloads folder after.
+    </div>
+
+      <div id="notesDiv">
+        <div id="textBox">
+
+            <h2 id="aboutText">Liquid Shape Distortions 🌀</h2>
+            <h3 id="subtitleText">Psychedelic animation generator; (p)art of your next trip</h3>
+
+
+            <p>Create psychedelic art using liquid motion, distortion, shadows and light. This tool is free, and works in real-time in the browser.</p>
+            <p>This project was inspired by drum & bass / acid techno music, and 90s rave posters.</p>
+            <p>Use this to create art for a music video, concert posters, stylized animations in creative projects, or simply to enjoy alongside some fine music.</p>
+
+            <p>Controls / hotkeys:</p>
+            <ul>
+                <li>↻: random stable seed [r]</li>
+                <li>⏯️: pause/play the animation [space]</li>
+                <li>📷: save a screenshot image [s]</li>
+                <li>🎥: start and stop video export [v]</li>
+                <li>🔊: start/stop music [m]</li>
+            </ul>
+
+            <p>Use the full control menu (top-right) to set a custom canvas size, adjust animation speed, control pattern and colours, etc...</p>
+            <p>You can export your creation as an image or video afterwards.</p>
+            <p>The animation is created with WebGL shaders, starting from a random seed position and mixing in elements of random noise (fractal brownian motion, 3D simplex noise), so each time you re-run it you're creating a unique piece of art.</p>
+            <p>This tool is completely free, open source (MIT license), without any paywalls or premium options. You are welcome to use it for personal or commercial purposes.</p>
+            <p>If you found this tool useful, feel free to buy me a coffee. My name is Alan, and I enjoy building open source software for art, animation, games, and more. This would be much appreciated during late-night coding sessions!</p>
+
+
+            <p>The code used to create the animation is resource-intensive, so it may run with some lag if your computer doesn't have enough computing power, too many tabs open, low battery, etc.</p>
+            <p>If the video export feature does not work for you, please try a free screen-recording tool such as OBS Studio.</p>
+
+            <p>This project is coded using webgl shaders, vanilla Javascript, HTML5 canvas, and CSS (<a href="https://github.com/collidingScopes/liquid-shape-distortions" target="_blank" rel="noopener">see github repo</a>). Video creation and encoding is done using mp4 muxer.</p>
+            <p>The song used is Fahrenheit Fair Enough by Telefon Tel Aviv.</p>
+            <p>If you enjoyed this, you may be interested in my other free / open source projects:</p>
+            <ul>
+              <li><a href="https://collidingScopes.github.io/particular-drift" target="_blank" rel="noopener">Particular Drift</a>: turn photos into flowing particle animations</li>
+              <li><a href="https://collidingScopes.github.io/liquid-logo" target="_blank" rel="noopener">Liquid Logo</a>: turn logos and icons into liquid metal animations</li>
+              <li><a href="https://collidingScopes.github.io/ascii" target="_blank" rel="noopener">Video-to-ASCII</a>: turn videos into ASCII pixel art</li>
+              <li><a href="https://collidingScopes.github.io/shimmer" target="_blank" rel="noopener">Shape Shimmer</a>: turn photos into funky wave animations</li>
+              <li><a href="https://collidingScopes.github.io" target="_blank" rel="noopener">Colliding Scopes</a>: turn photos into kaleidoscope animations</li>
+              <li><a href="https://manual-brick-breaker.netlify.app" target="_blank" rel="noopener">Manual Brick Breaker</a>: play brick breaker by waving your hands around</li>
+            </ul>
+            <p>Feel free to reach out to discuss, ask questions, or just to say hi! You can find me <a href="https://www.instagram.com/stereo.drift/" target="_blank" rel="noopener">@stereo.drift</a> on instagram, or through the other places below :)</p>
+        </div>
+      </div>
+
+      <div id="linksDiv">
+        <table id="infoMenuTable">
+            <tr>
+                <td><button id="gitHubButton"class="socialMediaButton"><a href="https://github.com/collidingScopes/liquid-shape-distortions" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a></button></td>
+                <td><button id="coffeeButton" class="socialMediaButton"><a href="https://www.buymeacoffee.com/stereoDrift" target="_blank" rel="noopener"><i class="fa-solid fa-heart"></i></a></button></td>
+                <td><button id="instagramButton" class="socialMediaButton"><a href="https://www.instagram.com/stereo.drift/" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a></button></td>
+                <td><button id="xButton" class="socialMediaButton"><a class="x-link" href="https://x.com/measure_plan" target="_blank" rel="noopener">𝕏</i></a></button></td>
+                <td><button id="emailButton" class="socialMediaButton"><a href="mailto:stereodriftvisuals@gmail.com" target="_blank" rel="noopener"><i class="fa-solid fa-envelope"></i></a></button></td>
+            </tr>
+        </table>
+      </div>
+
+    <script id="vertexShader" type="x-shader/x-vertex">
+        attribute vec2 position;
+        void main() {
+            gl_Position = vec4(position, 0.0, 1.0);
+        }
+    </script>
+
+    <script id="fragmentShader" type="x-shader/x-fragment">
+        precision highp float;
+
+        uniform vec2 resolution;
+        uniform float time;
+        uniform float seed;
+
+        // GUI-controlled parameters
+        uniform float timeScale;
+        uniform float patternAmp;
+        uniform float patternFreq;
+        uniform float bloomStrength;
+        uniform float saturation;
+        uniform float grainAmount;
+        uniform vec3 colorTint;
+        uniform float minCircleSize;
+        uniform float circleStrength;
+        uniform float distortX;
+        uniform float distortY;
+        uniform float halftoneAmount;
+        uniform float halftoneScale;
+        uniform float rgbScreenShift;
+        uniform float iridescence;
+        uniform float colorCycles;
+        uniform float fieldZoom;
+        uniform float fieldRotation;
+        uniform float fieldOffsetX;
+        uniform float fieldOffsetY;
+        uniform float flowStrength;
+        uniform float contrast;
+        uniform float exposure;
+        uniform float paletteShift;
+        uniform float inkBalance;
+        uniform float halftoneThreshold;
+        uniform float halftoneAngle;
+
+        // Noise functions for 3D simplex noise
+        vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+        vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+
+        // Pseudo-random function for noise generation
+        float random(vec2 st) {
+            return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+        }
+
+        float seedValue(float channel) {
+            // Hash a bounded value instead of sending large seeds into sin().
+            // This keeps neighbouring seeds visibly different on WebGL 1 floats.
+            float p = fract((seed + channel * 37.0) * 0.1031);
+            p *= p + 33.33;
+            p *= p + p;
+            return fract(p);
+        }
+
+        // Adapted from three.js DotScreenShader (MIT). Rotating the three
+        // plates separately produces the coloured screen / misregistration.
+        float dotPattern(float angle, float scale, vec2 offset) {
+            float s = sin(angle), c = cos(angle);
+            vec2 tex = gl_FragCoord.xy - resolution * 0.5 + offset;
+            vec2 point = vec2(c * tex.x - s * tex.y, s * tex.x + c * tex.y) * scale;
+            return (sin(point.x) * sin(point.y)) * 4.0;
+        }
+
+        // Inigo Quilez's cosine palette, via Erkaman/glsl-cos-palette.
+        vec3 cosPalette(float t, vec3 a, vec3 b, vec3 c, vec3 d) {
+            return a + b * cos(6.28318 * (c * t + d));
+        }
+
+        // 3D Simplex noise implementation
+        float snoise3D(vec3 v) {
+          const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+          const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+
+          // First corner
+          vec3 i  = floor(v + dot(v, C.yyy));
+          vec3 x0 = v - i + dot(i, C.xxx);
+
+          // Other corners
+          vec3 g = step(x0.yzx, x0.xyz);
+          vec3 l = 1.0 - g;
+          vec3 i1 = min(g.xyz, l.zxy);
+          vec3 i2 = max(g.xyz, l.zxy);
+
+          vec3 x1 = x0 - i1 + C.xxx;
+          vec3 x2 = x0 - i2 + C.yyy;
+          vec3 x3 = x0 - D.yyy;
+
+          // Permutations
+          i = mod289(i);
+          vec4 p = permute(permute(permute(
+                    i.z + vec4(0.0, i1.z, i2.z, 1.0))
+                  + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+                  + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+
+          // Gradients: 7x7 points over a square, mapped onto an octahedron.
+          // The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
+          float n_ = 0.142857142857; // 1.0/7.0
+          vec3 ns = n_ * D.wyz - D.xzx;
+
+          vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+
+          vec4 x_ = floor(j * ns.z);
+          vec4 y_ = floor(j - 7.0 * x_);
+
+          vec4 x = x_ *ns.x + ns.yyyy;
+          vec4 y = y_ *ns.x + ns.yyyy;
+          vec4 h = 1.0 - abs(x) - abs(y);
+
+          vec4 b0 = vec4(x.xy, y.xy);
+          vec4 b1 = vec4(x.zw, y.zw);
+
+          vec4 s0 = floor(b0)*2.0 + 1.0;
+          vec4 s1 = floor(b1)*2.0 + 1.0;
+          vec4 sh = -step(h, vec4(0.0));
+
+          vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+          vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+
+          vec3 p0 = vec3(a0.xy, h.x);
+          vec3 p1 = vec3(a0.zw, h.y);
+          vec3 p2 = vec3(a1.xy, h.z);
+          vec3 p3 = vec3(a1.zw, h.w);
+
+          // Normalise gradients
+          vec4 norm = taylorInvSqrt(vec4(dot(p0, p0), dot(p1, p1), dot(p2, p2), dot(p3, p3)));
+          p0 *= norm.x;
+          p1 *= norm.y;
+          p2 *= norm.z;
+          p3 *= norm.w;
+
+          // Mix final noise value
+          vec4 m = max(0.6 - vec4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0);
+          m = m * m;
+          return 42.0 * dot(m*m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
+        }
+
+        // Four-octave fBm with a fixed lacunarity. Parameters are applied to
+        // the domain in main(), so amplitude never explodes with the seed.
+        float fbm3D(vec3 p) {
+            float sum = 0.0;
+            float amplitude = 0.56;
+            mat2 rotation = mat2(0.80, -0.60, 0.60, 0.80);
+            for(int i = 0; i < 3; i++) {
+                sum += amplitude * snoise3D(p);
+                p.xy = rotation * p.xy * 1.93 + vec2(0.21, 0.47);
+                p.z = p.z * 1.37 + 0.19;
+                amplitude *= 0.50;
+            }
+            return sum;
+        }
+
+        void main() {
+            vec2 uv = gl_FragCoord.xy / resolution.xy;
+            float aspect = resolution.x / resolution.y;
+            vec2 p = uv - 0.5;
+            p.x *= aspect;
+
+            float fieldCos = cos(fieldRotation);
+            float fieldSin = sin(fieldRotation);
+            mat2 fieldMatrix = mat2(fieldCos, -fieldSin, fieldSin, fieldCos);
+            p = fieldMatrix * (p * fieldZoom);
+            p += vec2(fieldOffsetX, fieldOffsetY);
+
+            // Every moving layer uses this one clock. At speed 0 the image is
+            // completely still, including colour and grain.
+            float slowTime = time * timeScale;
+            float seedAngle = seedValue(1.0) * 6.2831853;
+            mat2 seedMatrix = mat2(cos(seedAngle), -sin(seedAngle), sin(seedAngle), cos(seedAngle));
+            p = seedMatrix * p;
+
+            vec2 seedOffset = (vec2(seedValue(2.0), seedValue(3.0)) - 0.5) * 7.0;
+            vec2 seedStretch = vec2(
+                mix(0.70, 1.38, seedValue(12.0)),
+                mix(0.70, 1.38, seedValue(13.0))
+            );
+            p *= seedStretch;
+            float patchScale = mix(1.22, 0.68, clamp(minCircleSize / 8.0, 0.0, 1.0));
+            float seedScale = mix(0.72, 1.38, seedValue(14.0));
+            float baseScale = (1.02 + patternFreq * 0.62) * patchScale * seedScale;
+            vec2 domain = p * baseScale + seedOffset;
+            float morphTime = slowTime * 0.22;
+
+            vec2 warp = vec2(
+                fbm3D(vec3(domain + vec2(1.7, 9.2), morphTime + seedValue(4.0) * 3.0)),
+                fbm3D(vec3(domain + vec2(8.3, 2.8), morphTime * 0.87 + seedValue(5.0) * 3.0))
+            );
+
+            float ampControl = clamp(patternAmp / 12.0, 0.15, 2.5);
+            vec2 directionalWarp = warp * vec2(
+                0.34 + distortX / 35.0 * 0.82,
+                0.34 + distortY / 35.0 * 0.82
+            );
+            vec2 drift = vec2(
+                sin(morphTime * 0.65 + seedAngle),
+                cos(morphTime * 0.53 - seedAngle)
+            ) * 0.10 * flowStrength;
+
+            float liquidField = fbm3D(vec3(
+                domain + directionalWarp * ampControl * flowStrength + drift,
+                morphTime * 0.72 + seedValue(6.0) * 4.0
+            ));
+            float fineField = snoise3D(vec3(
+                domain * 1.78 - warp * (0.24 + circleStrength * 0.08),
+                morphTime * 0.31 + seedValue(7.0) * 5.0
+            ));
+
+            float polarity = mix(-1.0, 1.0, step(0.5, seedValue(15.0)));
+            vec2 waveAxis = vec2(cos(seedAngle), sin(seedAngle));
+            float seedWave = sin(
+                dot(p, waveAxis) * mix(2.2, 5.4, seedValue(16.0))
+                + seedValue(17.0) * 6.2831853
+            ) * mix(0.05, 0.15, seedValue(18.0));
+            float field = liquidField * polarity + fineField * 0.18 + warp.x * 0.20 - warp.y * 0.10 + seedWave;
+            float threshold = -0.06 + (seedValue(8.0) - 0.5) * 0.26
+                - (circleStrength - 0.8) * 0.12 - inkBalance * 0.34;
+            float structure = smoothstep(threshold - 0.32, threshold + 0.28, field);
+            float seedBandScale = mix(0.72, 1.45, seedValue(19.0));
+            float ribbon = 0.5 + 0.5 * sin(
+                field * (6.2 + colorCycles * 7.0) * seedBandScale + warp.x * 1.15 - warp.y * 0.56
+            );
+            float baseLift = max(inkBalance, 0.0) * 0.22;
+            float finalValue = mix(
+                baseLift,
+                1.0,
+                pow(clamp(structure * (0.76 + ribbon * 0.32), 0.0, 1.0), contrast)
+            );
+
+            float palettePhase = field * (3.2 + colorCycles * 5.2)
+                + warp.x * 0.68 - warp.y * 0.34
+                + paletteShift + (seedValue(9.0) - 0.5) * 2.4;
+            vec3 seedPalette = vec3(0.00, 0.33, 0.67)
+                + (vec3(seedValue(20.0), seedValue(21.0), seedValue(22.0)) - 0.5) * 0.12;
+            vec3 iris = cosPalette(
+                palettePhase,
+                vec3(0.70), vec3(0.28), vec3(1.0), seedPalette
+            );
+            iris = mix(iris, vec3(0.97, 0.96, 0.93), 0.18);
+            vec3 pearl = mix(vec3(0.72, 0.78, 0.86), vec3(0.99, 0.97, 0.91), ribbon);
+            vec3 surface = mix(pearl, iris, iridescence);
+            surface = mix(surface, vec3(0.99, 0.97, 0.92), smoothstep(0.72, 1.0, finalValue) * 0.48);
+            vec3 color = surface * finalValue * colorTint * exposure;
+
+            color += surface * pow(finalValue, 4.0) * bloomStrength * 0.26;
+
+            // Stable print grain: it changes with the seed, never with time.
+            vec2 grainCell = floor(gl_FragCoord.xy * 0.72);
+            float noise = random(grainCell + vec2(seedValue(10.0) * 103.0, seedValue(11.0) * 97.0));
+            color += vec3(noise - 0.5) * grainAmount;
+
+            float luminance = dot(color, vec3(0.299, 0.587, 0.114));
+            vec3 saturatedColor = mix(vec3(luminance), color, saturation);
+            color = saturatedColor;
+            luminance = dot(color, vec3(0.299, 0.587, 0.114));
+
+            vec3 plate = vec3(
+                dotPattern(0.26 + halftoneAngle, halftoneScale, vec2(-rgbScreenShift, 0.0)),
+                dotPattern(1.31 + halftoneAngle, halftoneScale, vec2(0.0, rgbScreenShift)),
+                dotPattern(2.36 + halftoneAngle, halftoneScale, vec2(rgbScreenShift, 0.0))
+            );
+            vec3 screened = color * mix(
+                vec3(0.42),
+                vec3(1.0),
+                smoothstep(vec3(-1.85 + halftoneThreshold), vec3(1.85 + halftoneThreshold), plate + luminance * 2.65)
+            );
+            color = mix(color, screened, halftoneAmount);
+
+            gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+        }
+    </script>
+
+</body>
+
+<script src="vendor/mp4-muxer.min.js"></script>
+<script src="helperFunctions.js"></script>
+<script src="canvasVideoExport.js"></script>
+<script src="ui-shell.js"></script>
+<script src="main.js"></script>
+
+</html>
