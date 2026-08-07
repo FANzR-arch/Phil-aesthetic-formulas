@@ -1,0 +1,52 @@
+# 系统杂物
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# 依赖与构建产物
+node_modules/
+dist/
+build/
+coverage/
+
+# 本地过程资料：公开仓库只保留最终成品
+_drafts/
+_private/
+_notes/
+_research/
+_sources/
+image/
+output/
+.playwright-cli/
+
+# Agent / 编辑器的本地指令与状态
+CLAUDE.md
+AGENTS.md
+.agents/
+.claude/
+.codex/
+
+# 内部脚手架、生成工具和提示词
+_template/
+tools/
+*.prompt.md
+*.internal.md
+*.private.md
+
+# 日志与本地配置
+*.log
+.env
+.env.*
+*.local
+*.local.*
+
+# 密钥与证书
+*.key
+*.pem
+*.p12
+*.pfx
+
+# 发布白名单：新期目录默认不进入 Git，完成后再显式放行
+/[0-9][0-9][0-9]-*/
+!/005-typographic-portrait/
+!/006-grid-collage-poster/

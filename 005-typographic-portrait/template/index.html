@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文字肖像生成器</title>
+<style>
+  :root{ --paper:#efefec; --panel:#f7f7f4; --ink:#141414; --mut:#8d8d86; --line:#d9d9d2 }
+  *{box-sizing:border-box;margin:0}
+  body{
+    min-height:100vh;display:flex;background:var(--paper);color:var(--ink);
+    font-family:system-ui,"Microsoft YaHei",sans-serif;
+  }
+  .side{
+    width:280px;flex:none;background:var(--panel);border-right:1px solid var(--line);
+    padding:24px 20px 16px;display:flex;flex-direction:column;overflow-y:auto;
+  }
+  h1{font-size:15px;font-weight:700;letter-spacing:.02em}
+  .rule{border:0;border-top:1px solid var(--line);margin:16px 0}
+  .grp{font-family:ui-monospace,Consolas,monospace;font-size:10px;letter-spacing:.2em;color:var(--mut);margin:18px 0 10px}
+  .ctl{margin-bottom:12px}
+  .ctl label{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.08em;
+    color:#44443f;margin-bottom:5px;
+  }
+  .ctl output{color:var(--mut)}
+  input[type=range]{width:100%;accent-color:var(--ink)}
+  input[type=text],select{
+    width:100%;border:1px solid var(--line);background:#fff;border-radius:0;
+    padding:8px 9px;font:13px/1.15 ui-monospace,Consolas,monospace;color:var(--ink);
+  }
+  input[type=text]:focus,select:focus{outline:1px solid var(--ink);outline-offset:-1px}
+  .chk{
+    display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;
+    font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.08em;
+    color:#44443f;margin-bottom:12px;
+  }
+  .chk input{accent-color:var(--ink);width:14px;height:14px;margin:0}
+  .btnrow{display:flex;gap:8px;margin-top:4px}
+  .btn{
+    flex:1;text-align:center;cursor:pointer;user-select:none;
+    border:1px solid var(--ink);background:transparent;color:var(--ink);
+    font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.1em;padding:9px 0;
+  }
+  .btn:hover{background:var(--ink);color:#fff}
+  .btn.primary{background:var(--ink);color:#fff}
+  .foot{
+    margin-top:auto;padding-top:20px;
+    font-family:ui-monospace,Consolas,monospace;font-size:10.5px;line-height:1.9;color:var(--mut);
+  }
+  .foot a{color:inherit}
+  .stage{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;padding:28px}
+  .stage.drag{outline:2px dashed var(--ink);outline-offset:-14px}
+  canvas#out{
+    max-width:100%;max-height:calc(100vh - 56px);
+    border:1px solid var(--line);background:#fff;cursor:pointer;
+  }
+
+  .modal{position:fixed;inset:0;background:rgba(20,20,18,.55);display:none;align-items:center;justify-content:center;padding:32px;z-index:9}
+  .modal.on{display:flex}
+  .sheet{background:var(--panel);border:1px solid var(--ink);width:min(820px,100%);max-height:100%;display:flex;flex-direction:column}
+  .sheet h2{font-size:14px;font-weight:700;padding:20px 22px 0}
+  .tabs{display:flex;gap:6px;padding:14px 22px 0}
+  .tab{
+    cursor:pointer;border:1px solid var(--line);background:transparent;color:#44443f;
+    font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.08em;padding:7px 13px;
+  }
+  .tab.on{border-color:var(--ink);background:var(--ink);color:#fff}
+  pre{
+    margin:14px 22px;padding:16px;overflow:auto;flex:1;min-height:0;
+    background:#fff;border:1px solid var(--line);
+    font:12px/1.65 ui-monospace,Consolas,monospace;white-space:pre;
+  }
+  .sheet footer{display:flex;gap:8px;padding:0 22px 20px}
+  @media (max-width:780px){
+    body{flex-direction:column}
+    .side{width:100%;border-right:0;border-bottom:1px solid var(--line)}
+    .stage{padding:14px}
+    canvas#out{max-height:none}
+    .modal{padding:12px}
+  }
+</style>
+</head>
+<body>
+  <aside class="side">
+    <h1>文字肖像生成器</h1>
+
+    <hr class="rule">
+
+    <div class="ctl">
+      <label for="words">文字</label>
+      <input type="text" id="words" value="Formulasearch, Prompt, Design, Phil" spellcheck="false">
+    </div>
+
+    <div class="grp">散布</div>
+
+    <div class="ctl"><label>密度 <output id="o-density"></output></label>
+      <input type="range" id="density" min="0" max="1" step="0.01" value="0.58"></div>
+
+    <div class="ctl"><label>主体密度 <output id="o-cling"></output></label>
+      <input type="range" id="cling" min="0" max="1" step="0.01" value="0.8"></div>
+
+    <label class="chk"><input type="checkbox" id="invert"> 反转</label>
+
+    <div class="ctl"><label>字号 <output id="o-size"></output></label>
+      <input type="range" id="size" min="9" max="34" step="1" value="15"></div>
+
+    <div class="ctl"><label>失焦比例 <output id="o-defocus"></output></label>
+      <input type="range" id="defocus" min="0" max="0.8" step="0.01" value="0.35"></div>
+
+    <div class="grp">镜头</div>
+
+    <div class="ctl"><label>动态模糊 <output id="o-blur"></output></label>
+      <input type="range" id="blur" min="0" max="160" step="1" value="52"></div>
+
+    <div class="ctl"><label>方向 <output id="o-angle"></output></label>
+      <input type="range" id="angle" min="0" max="180" step="1" value="90"></div>
+
+    <div class="ctl"><label>对比度 <output id="o-contrast"></output></label>
+      <input type="range" id="contrast" min="1" max="2.4" step="0.05" value="1.4"></div>
+
+    <div class="grp">颜色</div>
+
+    <label class="chk"><input type="checkbox" id="color"> 彩色</label>
+
+    <div class="ctl"><label>文字取色 <output id="o-tint"></output></label>
+      <input type="range" id="tint" min="0" max="1" step="0.01" value="0.7"></div>
+
+    <div class="grp">闪烁</div>
+
+    <label class="chk"><input type="checkbox" id="flicker"> 开启</label>
+
+    <div class="ctl"><label>闪烁字数 <output id="o-intensity"></output></label>
+      <input type="range" id="intensity" min="0" max="1" step="0.01" value="0.5"></div>
+
+    <div class="ctl"><label>闪烁速度 <output id="o-speed"></output></label>
+      <input type="range" id="speed" min="0.15" max="3" step="0.05" value="1"></div>
+
+    <hr class="rule">
+
+    <div class="btnrow">
+      <label class="btn" for="file">上传图片</label>
+      <input type="file" id="file" accept="image/*" hidden>
+      <button class="btn" id="reroll">换一批</button>
+    </div>
+    <div class="btnrow">
+      <button class="btn primary" id="save">导出 PNG</button>
+      <button class="btn" id="code">导出代码</button>
+    </div>
+    <div class="foot">
+      拖入图片 / Ctrl+V 粘贴 / 点画布换一批<br><br>
+      <a href="https://x.com/Formulasearch" target="_blank">@Formulasearch</a> ·
+      <a href="https://github.com/FANzR-arch/Phil-aesthetic-formulas" target="_blank">仓库</a>
+    </div>
+  </aside>
+
+  <main class="stage" id="stage">
+    <canvas id="out"></canvas>
+  </main>
+
+  <div class="modal" id="modal">
+    <div class="sheet">
+      <h2>把当前效果搬进你的项目</h2>
+      <div class="tabs">
+        <button class="tab on" data-tab="html">HTML</button>
+        <button class="tab" data-tab="react">React</button>
+        <button class="tab" data-tab="json">JSON</button>
+      </div>
+      <pre id="codeout"></pre>
+      <footer>
+        <button class="btn primary" id="copy">复制</button>
+        <button class="btn" id="dlengine">下载 typo-portrait.js</button>
+        <button class="btn" id="closemodal">关闭</button>
+      </footer>
+    </div>
+  </div>
+
+<script src="typo-portrait.js"></script>
+<script src="sample-image.js"></script>
+<script>
+'use strict';
+
+const $ = id => document.getElementById(id);
+const out = $('out');
+
+const SLIDERS = ['density','cling','size','defocus','blur','angle','contrast','tint','intensity','speed'];
+
+// 以界面为准初始化：浏览器刷新会恢复表单值，读 DOM 才能保证引擎和滑杆不脱节
+function readUI(){
+  const o = {};
+  SLIDERS.forEach(id => o[id] = +$(id).value);
+  o.words = $('words').value.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+  o.invert = $('invert').checked;
+  o.color = $('color').checked;
+  o.motion = $('flicker').checked ? 'glitch' : 'none';
+  return o;
+}
+
+const p = TypoPortrait.create(out, readUI());
+p.setImage(window.SAMPLE_IMAGE);
+
+const fmt = {
+  density: v => v.toFixed(2), cling: v => v.toFixed(2), size: v => v + 'px',
+  defocus: v => Math.round(v * 100) + '%', blur: v => v + 'px', angle: v => v + '°',
+  contrast: v => v.toFixed(2), tint: v => Math.round(v * 100) + '%',
+  intensity: v => Math.round(v * 100) + '%',
+  speed: v => (7 * v).toFixed(1) + ' 次/秒',
+};
+for (const id of SLIDERS){
+  const el = $(id), o = $('o-' + id);
+  const sync = () => { o.textContent = fmt[id](+el.value); };
+  el.addEventListener('input', () => { sync(); p.setOptions({ [id]: +el.value }); });
+  sync();
+}
+if ($('flicker').checked) p.play();
+
+$('words').addEventListener('input', e => {
+  p.setOptions({ words: e.target.value.split(/[,，]/).map(s => s.trim()).filter(Boolean) });
+});
+$('invert').addEventListener('change', e => p.setOptions({ invert: e.target.checked }));
+$('color').addEventListener('change', e => p.setOptions({ color: e.target.checked }));
+$('flicker').addEventListener('change', e => {
+  p.setOptions({ motion: e.target.checked ? 'glitch' : 'none' });
+  e.target.checked ? p.play() : p.pause();
+});
+
+$('reroll').addEventListener('click', () => p.reseed());
+out.addEventListener('click', () => p.reseed());
+$('file').addEventListener('change', e => { if (e.target.files[0]) p.setImage(e.target.files[0]); });
+$('save').addEventListener('click', () => {
+  const a = document.createElement('a');
+  a.download = 'typographic-portrait.png';
+  a.href = p.toDataURL();
+  a.click();
+});
+
+const stage = $('stage');
+stage.addEventListener('dragover', e => { e.preventDefault(); stage.classList.add('drag'); });
+stage.addEventListener('dragleave', () => stage.classList.remove('drag'));
+stage.addEventListener('drop', e => {
+  e.preventDefault(); stage.classList.remove('drag');
+  if (e.dataTransfer.files[0]) p.setImage(e.dataTransfer.files[0]);
+});
+document.addEventListener('paste', e => {
+  const it = [...e.clipboardData.items].find(i => i.type.startsWith('image/'));
+  if (it) p.setImage(it.getAsFile());
+});
+
+/* ---------- 代码导出 ---------- */
+
+// 只导出与默认值不同的参数，生成的代码越短越好读
+function changedOptions(){
+  const cur = p.options, def = TypoPortrait.DEFAULTS, diff = {};
+  for (const k in def){
+    if (k === 'maxWidth' || k === 'font' || k === 'background') continue;
+    const a = cur[k], b = def[k];
+    if (Array.isArray(a) ? a.join('') !== b.join('') : a !== b) diff[k] = a;
+  }
+  return diff;
+}
+
+function optionLines(indent){
+  const d = changedOptions(), keys = Object.keys(d);
+  if (!keys.length) return indent + '// 全部使用默认参数';
+  return keys.map(k => indent + k + ': ' + JSON.stringify(d[k]) + ',').join('\n');
+}
+
+const TPL = {
+  html: () => `<canvas id="portrait"></canvas>
+
+<script src="typo-portrait.js"><\/script>
+<script>
+  const p = TypoPortrait.create(document.getElementById('portrait'), {
+${optionLines('    ')}
+  });
+
+  // 换成你自己的图片路径，或传入 File / <img> / <canvas>
+  p.setImage('photo.jpg')${p.options.motion !== 'none' ? '.then(() => p.play());' : ';'}
+<\/script>`,
+
+  react: () => `import { useEffect, useRef } from 'react';
+// typo-portrait.js 放进 public/ 或用 <script> 引入，确保 window.TypoPortrait 可用
+
+export default function Portrait({ src }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const p = window.TypoPortrait.create(ref.current, {
+${optionLines('      ')}
+    });
+    p.setImage(src)${p.options.motion !== 'none' ? '.then(() => p.play())' : ''};
+    return () => p.destroy();
+  }, [src]);
+
+  return <canvas ref={ref} style={{ maxWidth: '100%' }} />;
+}`,
+
+  json: () => JSON.stringify(changedOptions(), null, 2),
+};
+
+let tab = 'html';
+const renderCode = () => { $('codeout').textContent = TPL[tab](); };
+
+document.querySelectorAll('.tab').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
+    tab = b.dataset.tab;
+    renderCode();
+  });
+});
+
+$('code').addEventListener('click', () => { renderCode(); $('modal').classList.add('on'); });
+$('closemodal').addEventListener('click', () => $('modal').classList.remove('on'));
+$('modal').addEventListener('click', e => { if (e.target.id === 'modal') $('modal').classList.remove('on'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('modal').classList.remove('on'); });
+
+$('copy').addEventListener('click', async () => {
+  const btn = $('copy');
+  try {
+    await navigator.clipboard.writeText($('codeout').textContent);
+    btn.textContent = '已复制';
+  } catch {
+    const r = document.createRange();
+    r.selectNodeContents($('codeout'));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    btn.textContent = 'Ctrl+C';
+  }
+  setTimeout(() => { btn.textContent = '复制'; }, 1600);
+});
+
+$('dlengine').addEventListener('click', async () => {
+  const btn = $('dlengine');
+  try {
+    const res = await fetch('typo-portrait.js');
+    if (!res.ok) throw new Error(res.status);
+    const a = document.createElement('a');
+    a.download = 'typo-portrait.js';
+    a.href = URL.createObjectURL(await res.blob());
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  } catch {
+    btn.textContent = '请右键另存';   // file:// 下 fetch 会被拦
+    setTimeout(() => { btn.textContent = '下载 typo-portrait.js'; }, 2400);
+  }
+});
+</script>
+</body>
+</html>

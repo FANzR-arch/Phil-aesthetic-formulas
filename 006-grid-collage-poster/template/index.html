@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>网格拼贴海报生成器</title>
+<style>
+  :root{ --paper:#efefec; --panel:#f7f7f4; --ink:#141414; --mut:#8d8d86; --line:#d9d9d2 }
+  *{box-sizing:border-box;margin:0}
+  /* 控件比 100vh 长，所以让侧栏自己滚，画布始终留在视野里 */
+  body{
+    height:100vh;overflow:hidden;display:flex;background:var(--paper);color:var(--ink);
+    font-family:system-ui,"Microsoft YaHei",sans-serif;
+  }
+  .side{
+    width:280px;flex:none;background:var(--panel);border-right:1px solid var(--line);
+    padding:24px 20px 16px;display:flex;flex-direction:column;overflow-y:auto;
+  }
+  h1{font-size:15px;font-weight:700;letter-spacing:.02em}
+  .rule{border:0;border-top:1px solid var(--line);margin:16px 0}
+  .grp{font-family:ui-monospace,Consolas,monospace;font-size:10px;letter-spacing:.2em;color:var(--mut);margin:18px 0 10px}
+  .ctl{margin-bottom:12px}
+  .ctl label{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.08em;
+    color:#44443f;margin-bottom:5px;
+  }
+  .ctl output{color:var(--mut)}
+  input[type=range]{width:100%;accent-color:var(--ink)}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--line);background:#fff;border-radius:0;
+    padding:8px 9px;font:13px/1.35 ui-monospace,Consolas,monospace;color:var(--ink);
+  }
+  textarea{resize:vertical;min-height:150px;white-space:pre}
+  input[type=text]:focus,select:focus,textarea:focus{outline:1px solid var(--ink);outline-offset:-1px}
+  .swatches{display:flex;gap:8px}
+  .sw{flex:1}
+  .sw span{
+    display:block;font-family:ui-monospace,Consolas,monospace;font-size:11px;
+    letter-spacing:.08em;color:#44443f;margin-bottom:5px;
+  }
+  input[type=color]{
+    width:100%;height:30px;padding:0;border:1px solid var(--line);background:#fff;cursor:pointer;
+  }
+  .chk{
+    display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;
+    font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.08em;
+    color:#44443f;margin-bottom:12px;
+  }
+  .chk input{accent-color:var(--ink);width:14px;height:14px;margin:0}
+  .note{
+    font-family:ui-monospace,Consolas,monospace;font-size:10.5px;line-height:1.6;
+    color:var(--mut);margin:-4px 0 12px;
+  }
+  .note.warn{color:#a8542c}
+  .btnrow{display:flex;gap:8px;margin-top:4px}
+  .btn{
+    flex:1;text-align:center;cursor:pointer;user-select:none;
+    border:1px solid var(--ink);background:transparent;color:var(--ink);
+    font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.1em;padding:9px 0;
+  }
+  .btn:hover{background:var(--ink);color:#fff}
+  .btn.primary{background:var(--ink);color:#fff}
+  .foot{
+    margin-top:auto;padding-top:20px;
+    font-family:ui-monospace,Consolas,monospace;font-size:10.5px;line-height:1.9;color:var(--mut);
+  }
+  .foot a{color:inherit}
+  .stage{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;padding:28px}
+  .stage.drag{outline:2px dashed var(--ink);outline-offset:-14px}
+  canvas#out{
+    max-width:100%;max-height:calc(100vh - 56px);
+    border:1px solid var(--line);background:#fff;cursor:pointer;
+  }
+
+  .modal{position:fixed;inset:0;background:rgba(20,20,18,.55);display:none;align-items:center;justify-content:center;padding:32px;z-index:9}
+  .modal.on{display:flex}
+  .sheet{background:var(--panel);border:1px solid var(--ink);width:min(820px,100%);max-height:100%;display:flex;flex-direction:column}
+  .sheet h2{font-size:14px;font-weight:700;padding:20px 22px 0}
+  .tabs{display:flex;gap:6px;padding:14px 22px 0}
+  .tab{
+    cursor:pointer;border:1px solid var(--line);background:transparent;color:#44443f;
+    font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.08em;padding:7px 13px;
+  }
+  .tab.on{border-color:var(--ink);background:var(--ink);color:#fff}
+  pre{
+    margin:14px 22px;padding:16px;overflow:auto;flex:1;min-height:0;
+    background:#fff;border:1px solid var(--line);
+    font:12px/1.65 ui-monospace,Consolas,monospace;white-space:pre;
+  }
+  .sheet footer{display:flex;gap:8px;padding:0 22px 20px}
+  @media (max-width:780px){
+    body{flex-direction:column;height:auto;min-height:100vh;overflow:auto}
+    .side{width:100%;border-right:0;border-bottom:1px solid var(--line);overflow:visible}
+    .stage{padding:14px}
+    canvas#out{max-height:none}
+    .modal{padding:12px}
+  }
+</style>
+</head>
+<body>
+  <aside class="side">
+    <h1>网格拼贴海报生成器</h1>
+
+    <hr class="rule">
+
+    <div class="ctl">
+      <label for="text">文案 <output>空行分块</output></label>
+      <textarea id="text" spellcheck="false">EVERYTHING
+YOU CALL
+TASTE
+
+IS A GRID
+PLUS A LIST
+OF THINGS
+
+SOMEONE
+DECIDED
+TO LEAVE
+OUT</textarea>
+    </div>
+
+    <div class="ctl">
+      <label for="footer">落款</label>
+      <input type="text" id="footer" value="X.COM/FORMULASEARCH" spellcheck="false">
+    </div>
+
+    <div class="ctl">
+      <label for="ratio">画幅</label>
+      <select id="ratio">
+        <option value="1080x1350" selected>4:5　竖版社媒</option>
+        <option value="1080x1080">1:1　方图</option>
+        <option value="1080x1620">2:3　海报</option>
+        <option value="1440x810">16:9　横版 / 首屏</option>
+      </select>
+    </div>
+
+    <div class="grp">网格</div>
+
+    <div class="ctl"><label>列数 <output id="o-cols"></output></label>
+      <input type="range" id="cols" min="8" max="24" step="1" value="14"></div>
+
+    <div class="ctl"><label>四周留白 <output id="o-margin"></output></label>
+      <input type="range" id="margin" min="0" max="3" step="0.1" value="1.2"></div>
+
+    <div class="ctl"><label>网格线深浅 <output id="o-gridAlpha"></output></label>
+      <input type="range" id="gridAlpha" min="0" max="0.5" step="0.01" value="0.16"></div>
+
+    <div class="grp">文字</div>
+
+    <div class="ctl"><label>字号 <output id="o-fontSize"></output></label>
+      <input type="range" id="fontSize" min="0.5" max="1.8" step="0.02" value="0.76"></div>
+
+    <div class="ctl"><label>行距 <output id="o-lineHeight"></output></label>
+      <input type="range" id="lineHeight" min="0.85" max="1.5" step="0.01" value="1.05"></div>
+
+    <div class="ctl"><label>字距 <output id="o-tracking"></output></label>
+      <input type="range" id="tracking" min="-0.06" max="0.12" step="0.005" value="-0.015"></div>
+
+    <div class="ctl"><label>四周保护带 <output id="o-textPad"></output></label>
+      <input type="range" id="textPad" min="0" max="3" step="1" value="1"></div>
+
+    <label class="chk"><input type="checkbox" id="uppercase" checked> 全大写</label>
+    <label class="chk"><input type="checkbox" id="centerFirst" checked> 首块居中</label>
+    <label class="chk"><input type="checkbox" id="textPanel" checked> 文字底板盖网格</label>
+
+    <div class="grp">图块</div>
+
+    <div class="ctl"><label>数量 <output id="o-tiles"></output></label>
+      <input type="range" id="tiles" min="0" max="26" step="1" value="12"></div>
+
+    <div class="note" id="stats"></div>
+
+    <div class="ctl"><label>小方块比例 <output id="o-logoRatio"></output></label>
+      <input type="range" id="logoRatio" min="0" max="0.6" step="0.02" value="0.28"></div>
+
+    <div class="ctl"><label>块间留空 <output id="o-tileGutter"></output></label>
+      <input type="range" id="tileGutter" min="0" max="3" step="1" value="1"></div>
+
+    <div class="ctl"><label>探出边缘 <output id="o-bleed"></output></label>
+      <input type="range" id="bleed" min="0" max="4" step="1" value="1"></div>
+
+    <div class="grp">颜色</div>
+
+    <div class="ctl swatches">
+      <label class="sw"><span>纸色</span><input type="color" id="paper" value="#e8e5db"></label>
+      <label class="sw"><span>墨色</span><input type="color" id="ink" value="#111111"></label>
+    </div>
+
+    <hr class="rule">
+
+    <div class="ctl">
+      <label for="seed">排布种子 <output>决定这一版</output></label>
+      <input type="text" id="seed" spellcheck="false" inputmode="numeric">
+    </div>
+
+    <div class="btnrow">
+      <label class="btn" for="file">上传图片</label>
+      <input type="file" id="file" accept="image/*" multiple hidden>
+      <button class="btn" id="reroll">换一批</button>
+    </div>
+    <div class="btnrow">
+      <button class="btn primary" id="save">导出 PNG</button>
+      <button class="btn" id="code">导出代码</button>
+    </div>
+    <div class="foot" id="hint">
+      拖多张图片进来按顺序填格<br>
+      拖到某一格上 = 从那格开始填<br>
+      点画布 = 换一批排布<br><br>
+      <a href="https://x.com/Formulasearch" target="_blank">@Formulasearch</a> ·
+      <a href="https://github.com/FANzR-arch/Phil-aesthetic-formulas" target="_blank">仓库</a>
+    </div>
+  </aside>
+
+  <main class="stage" id="stage">
+    <canvas id="out"></canvas>
+  </main>
+
+  <div class="modal" id="modal">
+    <div class="sheet">
+      <h2>把当前版式搬进你的项目</h2>
+      <div class="tabs">
+        <button class="tab on" data-tab="html">HTML</button>
+        <button class="tab" data-tab="react">React</button>
+        <button class="tab" data-tab="json">JSON</button>
+      </div>
+      <pre id="codeout"></pre>
+      <footer>
+        <button class="btn primary" id="copy">复制</button>
+        <button class="btn" id="dlengine">下载 grid-collage.js</button>
+        <button class="btn" id="closemodal">关闭</button>
+      </footer>
+    </div>
+  </div>
+
+<script src="grid-collage.js"></script>
+<script>
+'use strict';
+
+const $ = id => document.getElementById(id);
+const out = $('out');
+
+const SLIDERS = ['cols','margin','gridAlpha','fontSize','lineHeight','tracking','textPad','tiles','logoRatio','tileGutter','bleed'];
+const CHECKS  = ['uppercase','centerFirst','textPanel'];
+
+// 以界面为准初始化：刷新后浏览器会恢复表单值，读 DOM 才不会和引擎脱节
+function readUI(){
+  const o = {};
+  SLIDERS.forEach(id => o[id] = +$(id).value);
+  CHECKS.forEach(id => o[id] = $(id).checked);
+  o.text = $('text').value;
+  o.footer = $('footer').value;
+  o.paper = $('paper').value;
+  o.ink = $('ink').value;
+  const [w, h] = $('ratio').value.split('x').map(Number);
+  o.width = w; o.height = h;
+  return o;
+}
+
+const g = GridCollage.create(out, readUI());
+
+/* 每次重排都把「实际放下几块 / 有几个图位」照实写出来。
+   tiles 是上限不是保证，不写出来的话用户会以为拖进去的图全用上了。 */
+function syncStats(){
+  const s = g.stats();
+  const el = $('stats');
+  el.textContent = s.placed < s.requested
+    ? `实际放下 ${s.placed} 块 · ${s.photos} 个图位`
+    : `${s.photos} 个图位可以放图片，其余是 logo 小方块`;
+  // 差一两块是正常的挤不下；差得多才提示，否则天天飘红等于没提示
+  el.classList.toggle('warn', s.placed < s.requested * 0.8);
+  if (s.placed < s.requested * 0.8) el.textContent += ' · 空间不够，调小字号或减少文字';
+  $('seed').value = g.options.seed;
+}
+
+/** 所有改动都走这里：改参数 → 重排 → 同步回显 */
+function apply(patch){ g.setOptions(patch); syncStats(); }
+
+const fmt = {
+  cols: v => v + ' 列', margin: v => v.toFixed(1) + ' 格',
+  gridAlpha: v => Math.round(v * 100) + '%',
+  fontSize: v => v.toFixed(2) + '× 格', lineHeight: v => v.toFixed(2),
+  tracking: v => (v * 100).toFixed(1) + '%', textPad: v => v + ' 格',
+  tiles: v => v + ' 块', logoRatio: v => Math.round(v * 100) + '%',
+  tileGutter: v => v + ' 格', bleed: v => v + ' 块',
+};
+for (const id of SLIDERS){
+  const el = $(id), o = $('o-' + id);
+  const sync = () => { o.textContent = fmt[id](+el.value); };
+  el.addEventListener('input', () => { sync(); apply({ [id]: +el.value }); });
+  sync();
+}
+for (const id of CHECKS){
+  $(id).addEventListener('change', e => apply({ [id]: e.target.checked }));
+}
+$('text').addEventListener('input', e => apply({ text: e.target.value }));
+$('footer').addEventListener('input', e => apply({ footer: e.target.value }));
+$('paper').addEventListener('input', e => apply({ paper: e.target.value }));
+$('ink').addEventListener('input', e => apply({ ink: e.target.value }));
+$('ratio').addEventListener('change', e => {
+  const [w, h] = e.target.value.split('x').map(Number);
+  apply({ width: w, height: h });
+});
+
+// 种子可读可写：换到满意的一版就把它记下来，下次填回去还是这一版
+$('seed').addEventListener('change', e => {
+  const v = parseInt(e.target.value, 10);
+  if (Number.isFinite(v)) { g.reseed(v); syncStats(); }
+  else e.target.value = g.options.seed;
+});
+
+const reroll = () => { g.reseed(); syncStats(); };
+$('reroll').addEventListener('click', reroll);
+out.addEventListener('click', reroll);
+$('file').addEventListener('change', e => { if (e.target.files.length) g.setImages(e.target.files); });
+
+$('save').addEventListener('click', () => {
+  const a = document.createElement('a');
+  a.download = 'grid-collage.png';
+  a.href = g.toDataURL();
+  a.click();
+});
+
+/* ---------- 拖放：落在哪一格就从哪一格开始填 ---------- */
+
+const stage = $('stage');
+stage.addEventListener('dragover', e => { e.preventDefault(); stage.classList.add('drag'); });
+stage.addEventListener('dragleave', () => stage.classList.remove('drag'));
+stage.addEventListener('drop', e => {
+  e.preventDefault(); stage.classList.remove('drag');
+  const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+  if (!files.length) return;
+  const r = out.getBoundingClientRect();
+  const x = (e.clientX - r.left) * out.width / r.width;
+  const y = (e.clientY - r.top) * out.height / r.height;
+  const hit = g.photoAt(x, y);
+  g.setImages(files, hit >= 0 ? hit : 0);
+});
+document.addEventListener('paste', e => {
+  const it = [...e.clipboardData.items].find(i => i.type.startsWith('image/'));
+  if (it) g.setImages([it.getAsFile()]);
+});
+
+/* ---------- 代码导出 ---------- */
+
+// 只导出与默认值不同的参数，生成的代码越短越好读
+function changedOptions(){
+  const cur = g.options, def = GridCollage.DEFAULTS, diff = {};
+  for (const k in def){
+    if (k === 'sizePool' || k === 'palette' || k === 'seed') continue;
+    if (JSON.stringify(cur[k]) !== JSON.stringify(def[k])) diff[k] = cur[k];
+  }
+  diff.seed = cur.seed;   // 种子决定这一版排布，必须带上
+  return diff;
+}
+
+function optionLines(indent){
+  const d = changedOptions();
+  return Object.keys(d).map(k => indent + k + ': ' + JSON.stringify(d[k]) + ',').join('\n');
+}
+
+const TPL = {
+  html: () => `<canvas id="poster"></canvas>
+
+<script src="grid-collage.js"><\/script>
+<script>
+  const g = GridCollage.create(document.getElementById('poster'), {
+${optionLines('    ')}
+  });
+
+  // 按图块顺序填图；这一版有 ${g.stats().photos} 个图位
+  g.setImages([${Array.from({ length: g.stats().photos }, (_, i) => `'${i + 1}.jpg'`).join(', ')}]);
+<\/script>`,
+
+  react: () => `import { useEffect, useRef } from 'react';
+// grid-collage.js 放进 public/ 或用 <script> 引入，确保 window.GridCollage 可用
+
+export default function Poster({ images = [] }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const g = window.GridCollage.create(ref.current, {
+${optionLines('      ')}
+    });
+    g.setImages(images);
+    return () => g.destroy();
+  }, [images]);
+
+  return <canvas ref={ref} style={{ maxWidth: '100%' }} />;
+}`,
+
+  json: () => JSON.stringify(changedOptions(), null, 2),
+};
+
+let tab = 'html';
+const renderCode = () => { $('codeout').textContent = TPL[tab](); };
+
+document.querySelectorAll('.tab').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
+    tab = b.dataset.tab;
+    renderCode();
+  });
+});
+
+$('code').addEventListener('click', () => { renderCode(); $('modal').classList.add('on'); });
+$('closemodal').addEventListener('click', () => $('modal').classList.remove('on'));
+$('modal').addEventListener('click', e => { if (e.target.id === 'modal') $('modal').classList.remove('on'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('modal').classList.remove('on'); });
+
+$('copy').addEventListener('click', async () => {
+  const btn = $('copy');
+  try {
+    await navigator.clipboard.writeText($('codeout').textContent);
+    btn.textContent = '已复制';
+  } catch {
+    const r = document.createRange();
+    r.selectNodeContents($('codeout'));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    btn.textContent = 'Ctrl+C';
+  }
+  setTimeout(() => { btn.textContent = '复制'; }, 1600);
+});
+
+syncStats();
+
+$('dlengine').addEventListener('click', async () => {
+  const btn = $('dlengine');
+  try {
+    const res = await fetch('grid-collage.js');
+    if (!res.ok) throw new Error(res.status);
+    const a = document.createElement('a');
+    a.download = 'grid-collage.js';
+    a.href = URL.createObjectURL(await res.blob());
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  } catch {
+    btn.textContent = '请右键另存';   // file:// 下 fetch 会被拦
+    setTimeout(() => { btn.textContent = '下载 grid-collage.js'; }, 2400);
+  }
+});
+</script>
+</body>
+</html>
