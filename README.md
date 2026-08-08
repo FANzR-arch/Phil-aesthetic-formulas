@@ -10,19 +10,30 @@
 
 ## 最新项目
 
-<a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/007-iridescent-flow-halftone/template/">
-  <img src="007-iridescent-flow-halftone/preview.png" alt="虹彩液态与 RGB 网点作品" width="100%">
+<a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/008-ascii-signal/template/">
+  <img src="008-ascii-signal/preview.svg" alt="ASCII Signal 图片转字符画工具" width="100%">
 </a>
 
-### 07 · 虹彩液态 × RGB 网点
+### 08 · ASCII Signal · 图片转字符画
 
-实时 WebGL 液态形变、虹彩错版与丝网网点实验器。支持确定性种子、强风格抽奖、参数存档、PNG 截图和 MP4 导出。
+上传一张图片，按亮度将它转换成可复制的真实字符画。支持字符密度、对比、反相和字符表切换，处理不离开浏览器。
 
-[**在线体验**](https://fanzr-arch.github.io/Phil-aesthetic-formulas/007-iridescent-flow-halftone/template/) · [查看项目说明](007-iridescent-flow-halftone/)
+[**在线体验**](https://fanzr-arch.github.io/Phil-aesthetic-formulas/008-ascii-signal/template/) · [查看项目说明](008-ascii-signal/)
 
 ## 全部实验
 
 <table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/008-ascii-signal/template/">
+        <img src="008-ascii-signal/preview.svg" alt="ASCII Signal 图片转字符画工具" width="100%">
+      </a>
+      <br><sub>FORMULA / 008</sub>
+      <h3>ASCII Signal · 图片转字符画</h3>
+      <p>把任意图片压缩成可复制的真实字符画；本地处理，适合 README、终端与社交图像。</p>
+      <p><a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/008-ascii-signal/template/"><strong>在线体验</strong></a> · <a href="008-ascii-signal/">项目说明</a></p>
+    </td>
+  </tr>
   <tr>
     <td width="50%" valign="top">
       <a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/006-grid-collage-poster/template/">

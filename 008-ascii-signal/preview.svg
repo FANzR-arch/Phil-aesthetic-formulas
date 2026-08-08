@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">ASCII Signal preview</title>
+  <desc id="desc">A warm dark character art interface preview.</desc>
+  <rect width="1200" height="720" fill="#261b16"/>
+  <g fill="#61a86d" font-family="monospace" font-size="15" font-weight="700" letter-spacing="1">
+    <text x="142" y="107">@@@%%%##***++===--::..             ..::--===++***##%%%@@@</text>
+    <text x="142" y="129">@@%%##**++==--::.   .::--====--::.   .::--==++**##%%@@</text>
+    <text x="142" y="151">@%##*++==-::.   .:-=++**####**++=-:.   .::-==++*##%@</text>
+    <text x="142" y="173">%#*+=-:.   .:-=+*#%@@@@@@@@@@%#*+=-:.   .:-=+*#%</text>
+    <text x="142" y="195">*+=:.   .:-+*#%@@@%%########%%@@@%#*+-:.   .:=+*</text>
+    <text x="142" y="217">=-.  .-=*#%@%#*+=--::::::::::--=+*#%@%#*=-.  .-=</text>
+    <text x="142" y="239">:.  :=*%@#*=-:.      SIGNAL / 08      .:-=*#@%*=:  .:</text>
+    <text x="142" y="261">.  .=#@%*=-.    .:-=+*#%%%%#*+=-:.    .-=*%@#=.  .</text>
+    <text x="142" y="283">  :+%@#=:   .-=*#%@%#*+=--=+*#%@%#*=-.   :=#@%+:  </text>
+    <text x="142" y="305"> :=#@*-.  :=*%@#*=-:.          .:-=*#@%*=:  .-*@#=:</text>
+    <text x="142" y="327"> -*@#-. .=#@%*=-.    .:------:.    .-=*%@#=. -#@*-</text>
+    <text x="142" y="349"> :#@*:  :#@#=:   .-=*#%@@@@%#*=-.   :=#@#:  :*@#:</text>
+    <text x="142" y="371"> .+@%=  +@%=.  :=#@%*+=----=+*%@#=:  .=%@+  =%@+.</text>
+    <text x="142" y="393">  =%@+ .#@*. .=#@#=:    ..    :=#@#=. .*@#. +@%=</text>
+    <text x="142" y="415">  :#@*. +@#: :#@*:  .-+*##*+-.  :*@#: :#@+ .*@#:</text>
+    <text x="142" y="437">  .+@%= :#@+ =@%-  :=#@%##%@#=:  -%@= +@#: =%@+.</text>
+    <text x="142" y="459">   -#@*: :#@+ =@%-  :=#@%##%@#=:  -%@= +@#: :*@#-</text>
+    <text x="142" y="481">   :=#@*: :#@+ =@%-  :=#@%##%@#=:  -%@= +@#: :*@#=:</text>
+    <text x="142" y="503">    .-+##*++**##*+=--=+**##**+=--=+*##**++*##+-. </text>
+    <text x="142" y="525">      .::--===++***############***++===--::.      </text>
+  </g>
+  <g fill="#f5f1e7" font-family="monospace" font-size="13" letter-spacing="2"><text x="65" y="55">FORMULA / 08</text><text x="939" y="55">108 × 135</text><text x="65" y="671">LOCAL CONVERSION</text><text x="894" y="671">DROP IMAGE TO REPLACE</text></g>
+  <g fill="#61a86d"><rect x="65" y="42" width="8" height="8"/><rect x="1130" y="42" width="8" height="8"/></g>
+  <rect x="54" y="31" width="1092" height="660" fill="none" stroke="#f5f1e7" stroke-opacity=".28"/>
+</svg>
