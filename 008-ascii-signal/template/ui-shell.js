@@ -1,4 +1,4 @@
-/* Formula Lab Shell v2.0.0 — fixed interaction components, no runtime dependency. */
+/* Formula Lab Shell v2.1.0 — fixed interaction components, no runtime dependency. */
 (() => {
   'use strict';
 
@@ -64,6 +64,58 @@
     });
   }
 
+  const dialogState = new WeakMap();
+
+  function resolveDialog(idOrElement, root = document) {
+    if (idOrElement instanceof HTMLElement) return idOrElement;
+    return root.getElementById ? root.getElementById(idOrElement) : document.getElementById(idOrElement);
+  }
+
+  function getFocusable(dialog) {
+    return [...dialog.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+      .filter(node => !node.hidden && node.getClientRects().length);
+  }
+
+  function openDialog(idOrElement, root = document) {
+    const dialog = resolveDialog(idOrElement, root);
+    if (!dialog) return false;
+    dialogState.set(dialog, { opener: document.activeElement instanceof HTMLElement ? document.activeElement : null });
+    dialog.hidden = false;
+    dialog.setAttribute('aria-hidden', 'false');
+    requestAnimationFrame(() => (getFocusable(dialog)[0] || dialog).focus());
+    return true;
+  }
+
+  function closeDialog(idOrElement, root = document) {
+    const dialog = resolveDialog(idOrElement, root);
+    if (!dialog || dialog.hidden) return false;
+    dialog.hidden = true;
+    dialog.setAttribute('aria-hidden', 'true');
+    const { opener } = dialogState.get(dialog) || {};
+    if (opener && opener.isConnected) opener.focus();
+    return true;
+  }
+
+  function mountDialog(dialog, root = document) {
+    if (dialog.dataset.labDialogMounted) return;
+    dialog.dataset.labDialogMounted = 'true';
+    dialog.setAttribute('role', 'dialog');
+    dialog.setAttribute('aria-modal', 'true');
+    dialog.setAttribute('aria-hidden', String(dialog.hidden));
+    if (!dialog.hasAttribute('tabindex')) dialog.tabIndex = -1;
+    dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(dialog, root); });
+    dialog.addEventListener('keydown', event => {
+      if (event.key === 'Escape') { event.preventDefault(); closeDialog(dialog, root); return; }
+      if (event.key !== 'Tab') return;
+      const focusable = getFocusable(dialog);
+      if (!focusable.length) { event.preventDefault(); dialog.focus(); return; }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
+  }
+
   function audit(root = document) {
     const required = [
       ['.lab-app', '页面根节点缺少 .lab-app'],
@@ -82,6 +134,13 @@
     toggle.addEventListener('click', () => setPanelCollapsed(!body.classList.contains('panel-collapsed'), root));
     toggle.setAttribute('aria-label', copy.collapsePanel);
     root.querySelectorAll('.lab-segmented').forEach(mountSegmented);
+    root.querySelectorAll('[data-lab-dialog]').forEach(dialog => mountDialog(dialog, root));
+    root.addEventListener('click', event => {
+      const opener = event.target.closest('[data-lab-dialog-open]');
+      const closer = event.target.closest('[data-lab-dialog-close]');
+      if (opener) openDialog(opener.dataset.labDialogOpen, root);
+      if (closer) closeDialog(closer.closest('[data-lab-dialog]'), root);
+    });
     mountCopy(root);
     root.addEventListener('keydown', event => {
       if (event.key === 'Escape' && window.matchMedia('(max-width: 760px)').matches && !body.classList.contains('panel-collapsed')) setPanelCollapsed(true, root);
@@ -92,6 +151,6 @@
     return report;
   }
 
-  window.FormulaLabShell = Object.freeze({ version: '2.0.0', copy, create, mount, audit, setPanelCollapsed, isPanelCollapsed: () => document.body.classList.contains('panel-collapsed') });
+  window.FormulaLabShell = Object.freeze({ version: '2.1.0', copy, create, mount, audit, setPanelCollapsed, isPanelCollapsed: () => document.body.classList.contains('panel-collapsed'), openDialog, closeDialog });
   mount();
 })();

@@ -340,7 +340,11 @@
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(render, 100);
   });
-  window.addEventListener('formula-lab:panel', () => window.setTimeout(render, 390));
+  let panelRenderFrame = 0;
+  window.addEventListener('formula-lab:panel', () => {
+    window.cancelAnimationFrame(panelRenderFrame);
+    panelRenderFrame = window.requestAnimationFrame(render);
+  });
 
   drawDemoSource();
   updateColorVariables();

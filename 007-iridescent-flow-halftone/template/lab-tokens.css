@@ -1,0 +1,30 @@
+/*
+ * Formula Lab token bridge v2.1.0
+ * Selected Open Props tokens by Adam Argyle, MIT License.
+ * Source: https://github.com/argyleink/open-props
+ * The complete license is in THIRD_PARTY_NOTICES.md.
+ */
+:where(html) {
+  --size-1: .25rem;
+  --size-2: .5rem;
+  --size-3: 1rem;
+  --size-4: 1.25rem;
+  --size-5: 1.5rem;
+  --size-6: 1.75rem;
+  --size-7: 2rem;
+  --size-8: 3rem;
+  --size-9: 4rem;
+  --size-fluid-1: clamp(.5rem, 1vw, 1rem);
+  --size-fluid-2: clamp(1rem, 2vw, 1.5rem);
+  --size-fluid-3: clamp(1.5rem, 3vw, 2rem);
+  --ease-3: cubic-bezier(.25, 0, .3, 1);
+  --ease-out-4: cubic-bezier(0, 0, .1, 1);
+  --ease-quart-out: cubic-bezier(.165, .84, .44, 1);
+  /* Fixed interaction language for every Formula Lab tool. */
+  --lab-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --lab-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --lab-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --lab-duration-press: 160ms;
+  --lab-duration-feedback: 180ms;
+  --lab-duration-drawer: 240ms;
+}

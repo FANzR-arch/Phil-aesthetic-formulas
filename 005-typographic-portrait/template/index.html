@@ -58,9 +58,7 @@
     border:1px solid var(--line);background:#fff;cursor:pointer;
   }
 
-  .modal{position:fixed;inset:0;background:rgba(20,20,18,.55);display:none;align-items:center;justify-content:center;padding:32px;z-index:9}
-  .modal.on{display:flex}
-  .sheet{background:var(--panel);border:1px solid var(--ink);width:min(820px,100%);max-height:100%;display:flex;flex-direction:column}
+  .sheet{display:flex;flex-direction:column}
   .sheet h2{font-size:14px;font-weight:700;padding:20px 22px 0}
   .tabs{display:flex;gap:6px;padding:14px 22px 0}
   .tab{
@@ -79,7 +77,6 @@
     .side{width:100%;border-right:0;border-bottom:1px solid var(--line)}
     .stage{padding:14px}
     canvas#out{max-height:none}
-    .modal{padding:12px}
   }
 </style>
 <link rel="stylesheet" href="ui-shell.css">
@@ -88,12 +85,9 @@
   .side{padding:0}
   .app-controls{padding:4px 20px 24px}
   .app-controls>.rule:first-child{display:none}
-  .app-actions{grid-auto-flow:row;grid-template-columns:1fr 1fr}
-  .app-actions .lab-action{min-height:62px}
   .foot{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
   .stage{display:block;padding:0}
   .lab-stage__body{display:grid;padding:calc(var(--lab-header-height) + 28px) 28px 28px}
-  .modal{z-index:90}
   @media(max-width:760px){
     .app-controls{padding:4px 19px 24px}
     .lab-stage__body{padding:calc(var(--lab-header-height) + 14px) 12px 12px}
@@ -113,53 +107,53 @@
 
     <div class="lab-panel__scroll"><div class="app-controls">
 
-    <div class="ctl">
+    <div class="lab-field ctl">
       <label for="words">文字</label>
       <input type="text" id="words" value="Formulasearch, Prompt, Design, Phil" spellcheck="false">
     </div>
 
     <div class="grp">散布</div>
 
-    <div class="ctl"><label>密度 <output id="o-density"></output></label>
+    <div class="lab-field ctl"><label for="density">密度 <output id="o-density"></output></label>
       <input type="range" id="density" min="0" max="1" step="0.01" value="0.58"></div>
 
-    <div class="ctl"><label>主体密度 <output id="o-cling"></output></label>
+    <div class="lab-field ctl"><label for="cling">主体密度 <output id="o-cling"></output></label>
       <input type="range" id="cling" min="0" max="1" step="0.01" value="0.8"></div>
 
-    <label class="chk"><input type="checkbox" id="invert"> 反转</label>
+    <label class="lab-check chk"><input type="checkbox" id="invert"> 反转</label>
 
-    <div class="ctl"><label>字号 <output id="o-size"></output></label>
+    <div class="lab-field ctl"><label for="size">字号 <output id="o-size"></output></label>
       <input type="range" id="size" min="9" max="34" step="1" value="15"></div>
 
-    <div class="ctl"><label>失焦比例 <output id="o-defocus"></output></label>
+    <div class="lab-field ctl"><label for="defocus">失焦比例 <output id="o-defocus"></output></label>
       <input type="range" id="defocus" min="0" max="0.8" step="0.01" value="0.35"></div>
 
     <div class="grp">镜头</div>
 
-    <div class="ctl"><label>动态模糊 <output id="o-blur"></output></label>
+    <div class="lab-field ctl"><label for="blur">动态模糊 <output id="o-blur"></output></label>
       <input type="range" id="blur" min="0" max="160" step="1" value="52"></div>
 
-    <div class="ctl"><label>方向 <output id="o-angle"></output></label>
+    <div class="lab-field ctl"><label for="angle">方向 <output id="o-angle"></output></label>
       <input type="range" id="angle" min="0" max="180" step="1" value="90"></div>
 
-    <div class="ctl"><label>对比度 <output id="o-contrast"></output></label>
+    <div class="lab-field ctl"><label for="contrast">对比度 <output id="o-contrast"></output></label>
       <input type="range" id="contrast" min="1" max="2.4" step="0.05" value="1.4"></div>
 
     <div class="grp">颜色</div>
 
-    <label class="chk"><input type="checkbox" id="color"> 彩色</label>
+    <label class="lab-check chk"><input type="checkbox" id="color"> 彩色</label>
 
-    <div class="ctl"><label>文字取色 <output id="o-tint"></output></label>
+    <div class="lab-field ctl"><label for="tint">文字取色 <output id="o-tint"></output></label>
       <input type="range" id="tint" min="0" max="1" step="0.01" value="0.7"></div>
 
     <div class="grp">闪烁</div>
 
-    <label class="chk"><input type="checkbox" id="flicker"> 开启</label>
+    <label class="lab-check chk"><input type="checkbox" id="flicker"> 开启</label>
 
-    <div class="ctl"><label>闪烁字数 <output id="o-intensity"></output></label>
+    <div class="lab-field ctl"><label for="intensity">闪烁字数 <output id="o-intensity"></output></label>
       <input type="range" id="intensity" min="0" max="1" step="0.01" value="0.5"></div>
 
-    <div class="ctl"><label>闪烁速度 <output id="o-speed"></output></label>
+    <div class="lab-field ctl"><label for="speed">闪烁速度 <output id="o-speed"></output></label>
       <input type="range" id="speed" min="0.15" max="3" step="0.05" value="1"></div>
 
     <div class="foot">
@@ -169,11 +163,11 @@
     </div>
     </div></div>
 
-    <footer class="lab-panel__actions app-actions">
-      <label class="lab-action" for="file"><span>上传图片</span><small>JPG / PNG</small></label>
+    <footer class="lab-panel__actions lab-panel__actions--two-up app-actions">
+      <label class="lab-action" for="file"><span>导入图像</span><small>JPG / PNG</small></label>
       <input type="file" id="file" accept="image/*" hidden>
-      <button class="lab-action" id="reroll"><span>换一批</span><small>重新排布</small></button>
-      <button class="lab-action lab-action--accent" id="save"><span>导出</span><small>PNG</small></button>
+      <button class="lab-action" id="reroll"><span>随机配方</span><small>重新排布</small></button>
+      <button class="lab-action lab-action--accent" id="save"><span>导出 PNG</span><small>图像文件</small></button>
       <button class="lab-action" id="code"><span>代码</span><small>HTML / React</small></button>
     </footer>
   </aside>
@@ -182,15 +176,15 @@
 
   <main class="lab-stage stage" id="stage">
     <header class="lab-stage__header">
-      <a class="lab-stage__id lab-gallery-link" href="../../" aria-label="返回全部项目"><i></i><span>ALL PROJECTS</span></a>
-      <div class="lab-stage__meta"><span>PORTRAIT</span><span>READY</span></div>
+      <a class="lab-stage__id lab-gallery-link" href="../../" aria-label="返回全部实验"><i></i><span>全部实验</span></a>
+      <div class="lab-stage__meta"><span>PORTRAIT</span><span>就绪</span></div>
     </header>
     <div class="lab-stage__body"><canvas id="out"></canvas></div>
   </main>
 
-  <div class="modal" id="modal">
-    <div class="sheet">
-      <h2>把当前效果搬进你的项目</h2>
+  <div class="lab-dialog modal" id="modal" data-lab-dialog hidden aria-labelledby="code-dialog-title">
+    <div class="lab-dialog__surface sheet">
+      <h2 id="code-dialog-title">把当前效果搬进你的项目</h2>
       <div class="tabs">
         <button class="tab on" data-tab="html">HTML</button>
         <button class="tab" data-tab="react">React</button>
@@ -200,7 +194,7 @@
       <footer>
         <button class="btn primary" id="copy">复制</button>
         <button class="btn" id="dlengine">下载 typo-portrait.js</button>
-        <button class="btn" id="closemodal">关闭</button>
+        <button class="btn" id="closemodal" type="button" data-lab-dialog-close>关闭</button>
       </footer>
     </div>
   </div>
@@ -340,10 +334,7 @@ document.querySelectorAll('.tab').forEach(b => {
   });
 });
 
-$('code').addEventListener('click', () => { renderCode(); $('modal').classList.add('on'); });
-$('closemodal').addEventListener('click', () => $('modal').classList.remove('on'));
-$('modal').addEventListener('click', e => { if (e.target.id === 'modal') $('modal').classList.remove('on'); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') $('modal').classList.remove('on'); });
+$('code').addEventListener('click', () => { renderCode(); FormulaLabShell.openDialog('modal'); });
 
 $('copy').addEventListener('click', async () => {
   const btn = $('copy');

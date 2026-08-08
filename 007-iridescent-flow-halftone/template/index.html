@@ -44,7 +44,7 @@
           </div>
           <p class="field-note">种子与全部参数都会保留；相同数值始终生成相同构图。</p>
 
-          <div class="format-grid" aria-label="画布比例">
+          <div class="lab-segmented format-grid" aria-label="画布比例">
             <button type="button" data-format="square">1:1</button>
             <button type="button" data-format="poster" class="active">4:5</button>
             <button type="button" data-format="story">9:16</button>
@@ -81,10 +81,10 @@
         </section>
       </div>
 
-      <footer class="lab-panel__actions panel-actions">
-        <button id="nudge-button" class="lab-action lab-action--accent action-button accent" type="button"><span>抽奖</span><small>随机整套效果</small></button>
-        <button id="save-parameters-button" class="lab-action action-button" type="button"><span>保存</span><small>收藏当前参数</small></button>
-        <button id="reset-button" class="lab-action action-button" type="button"><span>复位</span><small>回到当前配方</small></button>
+      <footer class="lab-panel__actions lab-panel__actions--two-up panel-actions">
+        <button id="nudge-button" class="lab-action lab-action--accent action-button accent" type="button"><span>随机配方</span><small>随机整套效果</small></button>
+        <button id="save-parameters-button" class="lab-action action-button" type="button"><span>保存配方</span><small>收藏当前参数</small></button>
+        <button id="reset-button" class="lab-action action-button" type="button"><span>重置</span><small>回到当前配方</small></button>
         <button id="copy-button" class="lab-action action-button" type="button"><span>复制参数</span><small>JSON</small></button>
       </footer>
     </aside>
@@ -93,8 +93,9 @@
       <span aria-hidden="true">←</span>
     </button>
 
+    <main class="lab-stage liquid-stage" id="stage">
     <header id="stage-header" class="lab-stage__header">
-      <a class="lab-stage__id lab-gallery-link stage-id" href="../../" aria-label="返回全部项目"><i></i><span>ALL PROJECTS</span></a>
+      <a class="lab-stage__id lab-gallery-link stage-id" href="../../" aria-label="返回全部实验"><i></i><span>全部实验</span></a>
       <div class="lab-stage__meta stage-meta">
         <span id="active-preset">BLACK / IRIS</span>
         <span id="seed-readout">SEED 937</span>
@@ -122,14 +123,14 @@
           <p class="intro-text">
             复用开源液态 shader，叠加网点丝印与 RGB 错版。
           </p>
-          <p class="intro-text">右上角 Open Controls 调速度、形变、虹彩、颗粒和网点。</p>
+          <p class="intro-text">左侧参数面板可调速度、形变、虹彩、颗粒和网点。</p>
           <p class="intro-text">🎲 换一组，📷 导出当前画面，Z 隐藏所有控件。</p>
 
           <div id="hotkeys-section">
             <ul id="hotkeys-list">
-              <li>↻: random stable seed [r]</li>
-              <li>⏯️: pause/play the animation [space]</li>
-              <li>📷: save a screenshot image [s]</li>
+              <li>↻：随机稳定种子 [R]</li>
+              <li>⏯️：播放 / 暂停动画 [Space]</li>
+              <li>📷：导出当前画面 [S]</li>
               <li>🎥: 导出视频 [v]</li>
             </ul>
           </div>
@@ -138,7 +139,7 @@
     </div>
 
     <div id="gui" class="ui-overlay"></div>
-    <canvas id="canvas"></canvas>
+    <div class="lab-stage__body"><canvas id="canvas"></canvas></div>
 
     <div id="zen-mode-container">
         <button id="legacy-zen-mode-button" class="gui-button icon">[Zen Mode]</button>
@@ -234,6 +235,7 @@
             </tr>
         </table>
       </div>
+    </main>
 
     <script id="vertexShader" type="x-shader/x-vertex">
         attribute vec2 position;

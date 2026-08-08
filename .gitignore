@@ -33,6 +33,19 @@ tools/
 *.internal.md
 *.private.md
 
+# Formula Lab UI Kit is a shipped runtime dependency for the public gallery.
+!/tools/
+!/tools/formula-lab/
+!/tools/formula-lab/**
+!/tools/new-issue.ps1
+!/tools/sync-lab-shell.ps1
+!/tools/check-lab-ui.ps1
+
+# The starter template is the enforceable source for every future Formula Lab issue.
+!/_template/
+!/_template/template/
+!/_template/template/**
+
 # 日志与本地配置
 *.log
 .env

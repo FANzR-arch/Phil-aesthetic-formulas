@@ -1,183 +1,48 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="阿哲 Phil 的审美分享复刻实验：可直接体验、下载和复用的视觉工具。">
-<title>审美公式实验室 · Formulasearch</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23191a17'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%23c9f719'/%3E%3C/svg%3E">
-<style>
-  :root{
-    --paper:oklch(95.2% .012 92);--panel:oklch(97.4% .009 92);--ink:oklch(20% .012 92);
-    --muted:oklch(49% .016 92);--line:oklch(80% .014 92);--acid:oklch(89% .205 120);
-    --display:Georgia,"Songti SC","Noto Serif SC",serif;
-    --ui:"Aptos","Microsoft YaHei UI","Noto Sans SC",sans-serif;
-    --data:"Cascadia Mono",Consolas,monospace;
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ui);line-height:1.5}
-  a{color:inherit}
-  a:focus-visible{outline:3px solid oklch(68% .19 30);outline-offset:3px}
-  .site-header{display:flex;align-items:center;justify-content:space-between;min-height:64px;padding:0 clamp(20px,4vw,64px);border-bottom:1px solid var(--ink)}
-  .brand{font:800 .75rem/1 var(--data);letter-spacing:.18em;text-decoration:none}
-  .header-links{display:flex;gap:20px;font:700 .6875rem/1 var(--data);letter-spacing:.08em;text-transform:uppercase}
-  .header-links a{text-decoration:none}
-  .header-links a:hover{text-decoration:underline;text-underline-offset:4px}
-  main{width:min(1440px,100%);margin:0 auto;padding:clamp(44px,6vw,88px) clamp(20px,4vw,64px) 96px}
-  .intro{display:grid;grid-template-columns:minmax(500px,.92fr) minmax(360px,1.08fr);gap:clamp(36px,5vw,72px);align-items:center;padding-bottom:clamp(64px,8vw,108px)}
-  .eyebrow{margin:0 0 20px;font:800 .6875rem/1 var(--data);letter-spacing:.18em;text-transform:uppercase}
-  h1{margin:0;white-space:nowrap;font:400 clamp(2.65rem,5.5vw,5.8rem)/.88 var(--display);letter-spacing:-.075em}
-  .intro-copy p{max-width:31ch;margin:28px 0 0;color:var(--muted);font-size:clamp(1rem,1.25vw,1.18rem)}
-  .intro-note{display:flex;align-items:center;gap:10px;margin-top:24px;font:700 .6875rem/1.4 var(--data);letter-spacing:.06em}
-  .intro-note i{width:9px;height:9px;border-radius:50%;background:var(--acid);box-shadow:0 0 0 5px var(--ink)}
-  .hero-thumbs{display:grid;grid-template-columns:1.32fr .78fr;grid-template-rows:repeat(2,minmax(0,1fr));gap:1px;aspect-ratio:16/10;background:var(--ink);border:1px solid var(--ink)}
-  .hero-thumb{display:block;min-width:0;overflow:hidden;background:var(--ink)}
-  .hero-thumb:first-child{grid-row:1/-1}
-  .hero-thumb img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 420ms cubic-bezier(.16,1,.3,1),filter 220ms ease}
-  .hero-thumb:hover img{transform:scale(1.025);filter:contrast(1.05)}
-  .section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;padding:0 0 18px;border-bottom:1px solid var(--ink)}
-  .section-head h2{margin:0;font:400 clamp(1.8rem,3vw,2.8rem)/1 var(--display);letter-spacing:-.04em}
-  .section-head span{font:700 .6875rem/1 var(--data);letter-spacing:.08em;color:var(--muted)}
-  .projects{border:1px solid var(--ink);margin-top:24px}
-  .project{display:grid;grid-template-columns:minmax(320px,.78fr) minmax(0,1.22fr);min-width:0;min-height:clamp(340px,31vw,450px);background:var(--panel)}
-  .project+.project{border-top:1px solid var(--ink)}
-  .project-media{position:relative;display:block;min-height:0;overflow:hidden;background:var(--ink)}
-  .project-media img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;transition:transform 420ms cubic-bezier(.16,1,.3,1),filter 220ms ease}
-  .project-media:hover img{transform:scale(1.018);filter:contrast(1.04)}
-  .project-copy{display:flex;flex-direction:column;padding:clamp(24px,3.2vw,44px)}
-  .project-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
-  .project-number,.project-key{font:800 .6875rem/1 var(--data);letter-spacing:.12em}
-  .project-key{color:var(--muted)}
-  .project-key b{display:inline-grid;place-items:center;width:25px;height:25px;margin-left:7px;border:1px solid var(--line);color:var(--ink)}
-  .project h3{max-width:11ch;margin:clamp(28px,4vw,56px) 0 14px;font:400 clamp(2rem,3.45vw,3.7rem)/.92 var(--display);letter-spacing:-.055em}
-  .project p{max-width:34ch;margin:0;color:var(--muted);font-size:.9375rem}
-  .project-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:30px}
-  .action{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 15px;border:1px solid var(--ink);font-size:.75rem;font-weight:800;text-decoration:none}
-  .action--primary{background:var(--ink);color:var(--panel)}
-  .action:hover{background:var(--acid);color:var(--ink)}
-  .latest{padding:6px 8px;background:var(--acid);font:800 .625rem/1 var(--data);letter-spacing:.08em}
-  footer{display:flex;justify-content:space-between;gap:24px;padding:26px clamp(20px,4vw,64px);border-top:1px solid var(--ink);font:700 .6875rem/1.5 var(--data);letter-spacing:.06em;color:var(--muted)}
-  footer a{text-underline-offset:4px}
-  @media(max-width:980px){
-    .intro{grid-template-columns:1fr;gap:42px}
-    .intro-copy p{margin-top:22px}
-    .hero-thumbs{width:100%;aspect-ratio:16/9}
-    .project{grid-template-columns:minmax(280px,.8fr) minmax(0,1.2fr)}
-  }
-  @media(max-width:700px){
-    .site-header{min-height:56px}.header-links a:first-child{display:none}
-    main{padding-top:48px;padding-bottom:64px}
-    .intro{gap:34px}.intro-copy{max-width:34ch}
-    .hero-thumbs{grid-template-columns:1.25fr .75fr;aspect-ratio:1/1}
-    .section-head{align-items:start;flex-direction:column}.section-head span{line-height:1.5}
-    .project{grid-template-columns:1fr;min-height:0}.project-copy{min-height:320px}.project-media{aspect-ratio:16/10}
-    footer{flex-direction:column}
-  }
-  @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="阿哲 Phil 的审美分享复刻实验：可直接体验、下载和复用的视觉工具。">
+  <title>审美公式实验室 · Formulasearch</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23191a17'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%23c9f719'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="tools/formula-lab/gallery.css">
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="./">FORMULASEARCH</a>
-    <nav class="header-links" aria-label="外部链接">
+  <header class="lab-site-header">
+    <a class="lab-site-brand" href="./">FORMULASEARCH</a>
+    <nav class="lab-site-links" aria-label="外部链接">
       <a href="https://github.com/FANzR-arch/Phil-aesthetic-formulas">GitHub</a>
       <a href="https://x.com/Formulasearch">X / @Formulasearch</a>
     </nav>
   </header>
 
-  <main>
-    <section class="intro" aria-labelledby="page-title">
-      <div class="intro-copy">
-        <p class="eyebrow">AESTHETIC FORMULAS / 005—007</p>
+  <main class="lab-gallery-main">
+    <section class="lab-gallery-intro" aria-labelledby="page-title">
+      <div>
+        <p class="lab-eyebrow">AESTHETIC FORMULAS / VISUAL TOOLS</p>
         <h1 id="page-title">审美公式实验室</h1>
         <p>把每天的审美观察，复刻成可以直接体验、下载和改造的视觉工具。</p>
-        <div class="intro-note"><i></i><span>点击缩略图进入 · 桌面端按 1 / 2 / 3 快速打开</span></div>
+        <div class="lab-gallery-note"><i></i><span>点击作品进入工具 · 按 1–4 快速打开</span></div>
       </div>
-      <div class="hero-thumbs" aria-label="快速浏览项目">
-        <a class="hero-thumb" href="007-iridescent-flow-halftone/template/" aria-label="打开 007 虹彩液态网点实验器">
-          <img src="007-iridescent-flow-halftone/preview.png" alt="虹彩液态与 RGB 网点作品" width="1200" height="1200">
-        </a>
-        <a class="hero-thumb" href="006-grid-collage-poster/template/" aria-label="打开 006 模块网格拼贴海报生成器">
-          <img src="006-grid-collage-poster/preview.png" alt="模块网格拼贴海报作品" width="1200" height="1600">
-        </a>
-        <a class="hero-thumb" href="005-typographic-portrait/template/" aria-label="打开 005 故障文字肖像生成器">
-          <img src="005-typographic-portrait/preview.png" alt="故障文字肖像作品" width="1200" height="1600">
-        </a>
-      </div>
+      <div class="lab-gallery-hero" data-lab-hero aria-label="最新实验预览"></div>
     </section>
 
     <section aria-labelledby="projects-title">
-      <div class="section-head">
-        <h2 id="projects-title">全部项目</h2>
-        <span>从最新一期开始浏览</span>
+      <div class="lab-gallery-section-head">
+        <h2 id="projects-title">全部实验</h2>
+        <span data-lab-project-count>正在载入项目</span>
       </div>
-
-      <div class="projects">
-        <article class="project project--featured">
-          <div class="project-copy">
-            <div class="project-top"><span class="project-number">FORMULA / 007</span><span class="latest">LATEST</span></div>
-            <h3>虹彩液态 × RGB 网点</h3>
-            <p>实时 WebGL 液态形变、虹彩错版与丝网网点实验器，可导出 PNG 和 MP4。</p>
-            <div class="project-actions">
-              <a class="action action--primary" href="007-iridescent-flow-halftone/template/">在线体验</a>
-              <a class="action" href="https://github.com/FANzR-arch/Phil-aesthetic-formulas/tree/main/007-iridescent-flow-halftone">查看说明</a>
-              <span class="project-key">KEY <b>1</b></span>
-            </div>
-          </div>
-          <a class="project-media" href="007-iridescent-flow-halftone/template/" aria-label="打开虹彩液态网点实验器" aria-keyshortcuts="1">
-            <img src="007-iridescent-flow-halftone/preview.png" alt="虹彩液态与 RGB 网点作品" width="1200" height="1200" loading="lazy">
-          </a>
-        </article>
-
-        <article class="project">
-          <div class="project-copy">
-            <div class="project-top"><span class="project-number">FORMULA / 006</span><span class="project-key">KEY <b>2</b></span></div>
-            <h3>模块网格拼贴海报</h3>
-            <p>把文字与图片编入模块网格，快速生成可复现、可导出的海报版式。</p>
-            <div class="project-actions">
-              <a class="action action--primary" href="006-grid-collage-poster/template/">在线体验</a>
-              <a class="action" href="https://github.com/FANzR-arch/Phil-aesthetic-formulas/tree/main/006-grid-collage-poster">查看说明</a>
-            </div>
-          </div>
-          <a class="project-media" href="006-grid-collage-poster/template/" aria-label="打开模块网格拼贴海报生成器" aria-keyshortcuts="2">
-            <img src="006-grid-collage-poster/preview.png" alt="模块网格拼贴海报作品" width="1200" height="1600" loading="lazy">
-          </a>
-        </article>
-
-        <article class="project">
-          <div class="project-copy">
-            <div class="project-top"><span class="project-number">FORMULA / 005</span><span class="project-key">KEY <b>3</b></span></div>
-            <h3>故障艺术 × 文字肖像</h3>
-            <p>用文字密度、动态模糊和失焦关系重绘照片，也可把效果嵌入自己的网页。</p>
-            <div class="project-actions">
-              <a class="action action--primary" href="005-typographic-portrait/template/">在线体验</a>
-              <a class="action" href="https://github.com/FANzR-arch/Phil-aesthetic-formulas/tree/main/005-typographic-portrait">查看说明</a>
-            </div>
-          </div>
-          <a class="project-media" href="005-typographic-portrait/template/" aria-label="打开故障文字肖像生成器" aria-keyshortcuts="3">
-            <img src="005-typographic-portrait/preview.png" alt="故障文字肖像作品" width="1200" height="1600" loading="lazy">
-          </a>
-        </article>
-      </div>
+      <div class="lab-gallery-list" data-lab-gallery></div>
     </section>
   </main>
 
-  <footer>
+  <footer class="lab-gallery-footer">
     <span>FORMULASEARCH · AESTHETIC FORMULAS</span>
     <span><a href="https://x.com/Formulasearch">X</a> · <a href="https://github.com/FANzR-arch/Phil-aesthetic-formulas">GITHUB</a></span>
   </footer>
 
-<script>
-  const shortcuts = {
-    1: '007-iridescent-flow-halftone/template/',
-    2: '006-grid-collage-poster/template/',
-    3: '005-typographic-portrait/template/'
-  };
-  addEventListener('keydown', event => {
-    if (event.ctrlKey || event.metaKey || event.altKey || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
-    if (shortcuts[event.key]) location.href = shortcuts[event.key];
-  });
-</script>
+  <script src="tools/formula-lab/projects.js"></script>
+  <script src="tools/formula-lab/gallery.js"></script>
 </body>
 </html>

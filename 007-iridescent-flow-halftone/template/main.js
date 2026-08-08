@@ -209,7 +209,8 @@ let resetPresetId = 'iris';
 let customMixLabel = 'CUSTOM MIX';
 let lastLotteryProfileId = '';
 let savedRecipes = [];
-let isPlaying = true;
+const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+let isPlaying = !reducedMotionQuery.matches;
 let animationID = null;
 let time = 0;
 let timeOffset = performance.now();
@@ -218,6 +219,13 @@ let frameCount = 0;
 let lastFpsTime = performance.now();
 let toastTimer;
 const controlInputs = new Map();
+
+function syncPlayPauseButton() {
+  const button = document.getElementById('playPauseBtn');
+  if (!button) return;
+  button.querySelector('.action-icon').textContent = isPlaying ? '⏸' : '▶';
+  button.querySelector('b').textContent = isPlaying ? '暂停' : '播放';
+}
 
 if (!gl) {
   document.body.innerHTML = '<p class="webgl-error">此浏览器未启用 WebGL，无法运行生成器。</p>';
@@ -711,6 +719,12 @@ function togglePlayPause() {
   }
 }
 
+if (typeof reducedMotionQuery.addEventListener === 'function') {
+  reducedMotionQuery.addEventListener('change', event => {
+    if (event.matches && isPlaying) togglePlayPause();
+  });
+}
+
 function toggleZenMode() {
   const isZen = document.body.classList.toggle('zen');
   const button = document.getElementById('zen-mode-button');
@@ -781,7 +795,9 @@ updateInterfaceState();
 updateCanvasSize();
 gl.uniform1f(uniforms.seed, randomSeed);
 updateUniforms();
-animationID = requestAnimationFrame(render);
+syncPlayPauseButton();
+if (isPlaying) animationID = requestAnimationFrame(render);
+else drawScene();
 
 window.params = params;
 window.applyPreset = applyPreset;

@@ -74,9 +74,7 @@
     border:1px solid var(--line);background:#fff;cursor:pointer;
   }
 
-  .modal{position:fixed;inset:0;background:rgba(20,20,18,.55);display:none;align-items:center;justify-content:center;padding:32px;z-index:9}
-  .modal.on{display:flex}
-  .sheet{background:var(--panel);border:1px solid var(--ink);width:min(820px,100%);max-height:100%;display:flex;flex-direction:column}
+  .sheet{display:flex;flex-direction:column}
   .sheet h2{font-size:14px;font-weight:700;padding:20px 22px 0}
   .tabs{display:flex;gap:6px;padding:14px 22px 0}
   .tab{
@@ -95,7 +93,6 @@
     .side{width:100%;border-right:0;border-bottom:1px solid var(--line);overflow:visible}
     .stage{padding:14px}
     canvas#out{max-height:none}
-    .modal{padding:12px}
   }
 </style>
 <link rel="stylesheet" href="ui-shell.css">
@@ -103,12 +100,9 @@
   :root{--lab-panel-width:320px}
   .side{padding:0}
   .app-controls{padding:4px 20px 24px}
-  .app-actions{grid-auto-flow:row;grid-template-columns:1fr 1fr}
-  .app-actions .lab-action{min-height:62px}
   .foot{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
   .stage{display:block;padding:0}
   .lab-stage__body{display:grid;padding:calc(var(--lab-header-height) + 28px) 28px 28px}
-  .modal{z-index:90}
   @media(max-width:760px){
     .app-controls{padding:4px 19px 24px}
     .lab-stage__body{padding:calc(var(--lab-header-height) + 14px) 12px 12px}
@@ -128,7 +122,7 @@
 
     <div class="lab-panel__scroll"><div class="app-controls">
 
-    <div class="ctl">
+    <div class="lab-field ctl">
       <label for="text">文案 <output>空行分块</output></label>
       <textarea id="text" spellcheck="false">EVERYTHING
 YOU CALL
@@ -144,12 +138,12 @@ TO LEAVE
 OUT</textarea>
     </div>
 
-    <div class="ctl">
+    <div class="lab-field ctl">
       <label for="footer">落款</label>
       <input type="text" id="footer" value="X.COM/FORMULASEARCH" spellcheck="false">
     </div>
 
-    <div class="ctl">
+    <div class="lab-field ctl">
       <label for="ratio">画幅</label>
       <select id="ratio">
         <option value="1080x1350" selected>4:5　竖版社媒</option>
@@ -161,59 +155,59 @@ OUT</textarea>
 
     <div class="grp">网格</div>
 
-    <div class="ctl"><label>列数 <output id="o-cols"></output></label>
+    <div class="lab-field ctl"><label for="cols">列数 <output id="o-cols"></output></label>
       <input type="range" id="cols" min="8" max="24" step="1" value="14"></div>
 
-    <div class="ctl"><label>四周留白 <output id="o-margin"></output></label>
+    <div class="lab-field ctl"><label for="margin">四周留白 <output id="o-margin"></output></label>
       <input type="range" id="margin" min="0" max="3" step="0.1" value="1.2"></div>
 
-    <div class="ctl"><label>网格线深浅 <output id="o-gridAlpha"></output></label>
+    <div class="lab-field ctl"><label for="gridAlpha">网格线深浅 <output id="o-gridAlpha"></output></label>
       <input type="range" id="gridAlpha" min="0" max="0.5" step="0.01" value="0.16"></div>
 
     <div class="grp">文字</div>
 
-    <div class="ctl"><label>字号 <output id="o-fontSize"></output></label>
+    <div class="lab-field ctl"><label for="fontSize">字号 <output id="o-fontSize"></output></label>
       <input type="range" id="fontSize" min="0.5" max="1.8" step="0.02" value="0.76"></div>
 
-    <div class="ctl"><label>行距 <output id="o-lineHeight"></output></label>
+    <div class="lab-field ctl"><label for="lineHeight">行距 <output id="o-lineHeight"></output></label>
       <input type="range" id="lineHeight" min="0.85" max="1.5" step="0.01" value="1.05"></div>
 
-    <div class="ctl"><label>字距 <output id="o-tracking"></output></label>
+    <div class="lab-field ctl"><label for="tracking">字距 <output id="o-tracking"></output></label>
       <input type="range" id="tracking" min="-0.06" max="0.12" step="0.005" value="-0.015"></div>
 
-    <div class="ctl"><label>四周保护带 <output id="o-textPad"></output></label>
+    <div class="lab-field ctl"><label for="textPad">四周保护带 <output id="o-textPad"></output></label>
       <input type="range" id="textPad" min="0" max="3" step="1" value="1"></div>
 
-    <label class="chk"><input type="checkbox" id="uppercase" checked> 全大写</label>
-    <label class="chk"><input type="checkbox" id="centerFirst" checked> 首块居中</label>
-    <label class="chk"><input type="checkbox" id="textPanel" checked> 文字底板盖网格</label>
+    <label class="lab-check chk"><input type="checkbox" id="uppercase" checked> 全大写</label>
+    <label class="lab-check chk"><input type="checkbox" id="centerFirst" checked> 首块居中</label>
+    <label class="lab-check chk"><input type="checkbox" id="textPanel" checked> 文字底板盖网格</label>
 
     <div class="grp">图块</div>
 
-    <div class="ctl"><label>数量 <output id="o-tiles"></output></label>
+    <div class="lab-field ctl"><label for="tiles">数量 <output id="o-tiles"></output></label>
       <input type="range" id="tiles" min="0" max="26" step="1" value="12"></div>
 
     <div class="note" id="stats"></div>
 
-    <div class="ctl"><label>小方块比例 <output id="o-logoRatio"></output></label>
+    <div class="lab-field ctl"><label for="logoRatio">小方块比例 <output id="o-logoRatio"></output></label>
       <input type="range" id="logoRatio" min="0" max="0.6" step="0.02" value="0.28"></div>
 
-    <div class="ctl"><label>块间留空 <output id="o-tileGutter"></output></label>
+    <div class="lab-field ctl"><label for="tileGutter">块间留空 <output id="o-tileGutter"></output></label>
       <input type="range" id="tileGutter" min="0" max="3" step="1" value="1"></div>
 
-    <div class="ctl"><label>探出边缘 <output id="o-bleed"></output></label>
+    <div class="lab-field ctl"><label for="bleed">探出边缘 <output id="o-bleed"></output></label>
       <input type="range" id="bleed" min="0" max="4" step="1" value="1"></div>
 
     <div class="grp">颜色</div>
 
-    <div class="ctl swatches">
+    <div class="lab-field ctl swatches">
       <label class="sw"><span>纸色</span><input type="color" id="paper" value="#e8e5db"></label>
       <label class="sw"><span>墨色</span><input type="color" id="ink" value="#111111"></label>
     </div>
 
     <hr class="rule">
 
-    <div class="ctl">
+    <div class="lab-field ctl">
       <label for="seed">排布种子 <output>决定这一版</output></label>
       <input type="text" id="seed" spellcheck="false" inputmode="numeric">
     </div>
@@ -227,11 +221,11 @@ OUT</textarea>
     </div>
     </div></div>
 
-    <footer class="lab-panel__actions app-actions">
-      <label class="lab-action" for="file"><span>上传图片</span><small>可多选</small></label>
+    <footer class="lab-panel__actions lab-panel__actions--two-up app-actions">
+      <label class="lab-action" for="file"><span>导入图像</span><small>可多选</small></label>
       <input type="file" id="file" accept="image/*" multiple hidden>
-      <button class="lab-action" id="reroll"><span>换一批</span><small>重新排布</small></button>
-      <button class="lab-action lab-action--accent" id="save"><span>导出</span><small>PNG</small></button>
+      <button class="lab-action" id="reroll"><span>随机配方</span><small>重新排布</small></button>
+      <button class="lab-action lab-action--accent" id="save"><span>导出 PNG</span><small>图像文件</small></button>
       <button class="lab-action" id="code"><span>代码</span><small>HTML / React</small></button>
     </footer>
   </aside>
@@ -240,15 +234,15 @@ OUT</textarea>
 
   <main class="lab-stage stage" id="stage">
     <header class="lab-stage__header">
-      <a class="lab-stage__id lab-gallery-link" href="../../" aria-label="返回全部项目"><i></i><span>ALL PROJECTS</span></a>
-      <div class="lab-stage__meta"><span>GRID SYSTEM</span><span>READY</span></div>
+      <a class="lab-stage__id lab-gallery-link" href="../../" aria-label="返回全部实验"><i></i><span>全部实验</span></a>
+      <div class="lab-stage__meta"><span>GRID SYSTEM</span><span>就绪</span></div>
     </header>
     <div class="lab-stage__body"><canvas id="out"></canvas></div>
   </main>
 
-  <div class="modal" id="modal">
-    <div class="sheet">
-      <h2>把当前版式搬进你的项目</h2>
+  <div class="lab-dialog modal" id="modal" data-lab-dialog hidden aria-labelledby="code-dialog-title">
+    <div class="lab-dialog__surface sheet">
+      <h2 id="code-dialog-title">把当前版式搬进你的项目</h2>
       <div class="tabs">
         <button class="tab on" data-tab="html">HTML</button>
         <button class="tab" data-tab="react">React</button>
@@ -258,7 +252,7 @@ OUT</textarea>
       <footer>
         <button class="btn primary" id="copy">复制</button>
         <button class="btn" id="dlengine">下载 grid-collage.js</button>
-        <button class="btn" id="closemodal">关闭</button>
+        <button class="btn" id="closemodal" type="button" data-lab-dialog-close>关闭</button>
       </footer>
     </div>
   </div>
@@ -434,10 +428,7 @@ document.querySelectorAll('.tab').forEach(b => {
   });
 });
 
-$('code').addEventListener('click', () => { renderCode(); $('modal').classList.add('on'); });
-$('closemodal').addEventListener('click', () => $('modal').classList.remove('on'));
-$('modal').addEventListener('click', e => { if (e.target.id === 'modal') $('modal').classList.remove('on'); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') $('modal').classList.remove('on'); });
+$('code').addEventListener('click', () => { renderCode(); FormulaLabShell.openDialog('modal'); });
 
 $('copy').addEventListener('click', async () => {
   const btn = $('copy');

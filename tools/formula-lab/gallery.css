@@ -1,0 +1,37 @@
+/* Formula Lab Gallery v2.1.0 — public gallery components. */
+@import url("./lab-tokens.css");
+
+:root { --lab-paper: oklch(95.2% .012 92); --lab-panel: oklch(97.4% .009 92); --lab-ink: oklch(20% .012 92); --lab-muted: oklch(49% .016 92); --lab-line: oklch(80% .014 92); --lab-accent: oklch(89% .205 120); --lab-display: Georgia, "Songti SC", "Noto Serif SC", serif; --lab-ui: "Aptos", "Microsoft YaHei UI", "Noto Sans SC", sans-serif; --lab-data: "Cascadia Mono", Consolas, monospace; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--lab-paper); color: var(--lab-ink); font-family: var(--lab-ui); line-height: 1.5; }
+a { color: inherit; }
+a:focus-visible { outline: 3px solid oklch(68% .19 30); outline-offset: 3px; }
+.lab-site-header { display: flex; align-items: center; justify-content: space-between; min-height: 64px; padding: 0 clamp(20px, 4vw, 64px); border-bottom: 1px solid var(--lab-ink); }
+.lab-site-brand { min-width: 0; font: 800 .75rem/1 var(--lab-data); letter-spacing: .18em; text-decoration: none; }
+.lab-site-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 20px; min-width: 0; font: 700 .6875rem/1 var(--lab-data); letter-spacing: .08em; text-transform: uppercase; }
+.lab-site-links a { text-decoration: none; }.lab-site-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.lab-gallery-main { width: min(1440px, 100%); margin: 0 auto; padding: clamp(44px, 6vw, 88px) clamp(20px, 4vw, 64px) 96px; }
+.lab-gallery-intro { display: grid; grid-template-columns: minmax(500px, .92fr) minmax(360px, 1.08fr); gap: clamp(36px, 5vw, 72px); align-items: center; padding-bottom: clamp(64px, 8vw, 108px); }
+.lab-eyebrow { margin: 0 0 20px; font: 800 .6875rem/1 var(--lab-data); letter-spacing: .18em; text-transform: uppercase; }
+.lab-gallery-intro h1 { margin: 0; font: 400 clamp(2.65rem, 5.5vw, 5.8rem)/.88 var(--lab-display); letter-spacing: -.075em; }
+.lab-gallery-intro p:not(.lab-eyebrow) { max-width: 31ch; margin: 28px 0 0; color: var(--lab-muted); font-size: clamp(1rem, 1.25vw, 1.18rem); }
+.lab-gallery-note { display: flex; align-items: center; gap: 10px; margin-top: 24px; font: 700 .6875rem/1.4 var(--lab-data); letter-spacing: .06em; }
+.lab-gallery-note i { width: 9px; height: 9px; border-radius: 50%; background: var(--lab-accent); box-shadow: 0 0 0 5px var(--lab-ink); }
+.lab-gallery-hero { display: grid; grid-template-columns: 1.32fr .78fr; grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 1px; aspect-ratio: 16 / 10; background: var(--lab-ink); border: 1px solid var(--lab-ink); }
+.lab-gallery-hero__item { display: block; min-width: 0; overflow: hidden; background: var(--lab-ink); }.lab-gallery-hero__item:first-child { grid-row: 1 / -1; }
+.lab-gallery-hero__item img, .lab-gallery-card__media img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 240ms var(--lab-ease-out); }
+@media (hover: hover) and (pointer: fine) { .lab-gallery-hero__item:hover img, .lab-gallery-card__media:hover img { transform: scale(1.025); } }
+.lab-gallery-section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding: 0 0 18px; border-bottom: 1px solid var(--lab-ink); }
+.lab-gallery-section-head h2 { margin: 0; font: 400 clamp(1.8rem, 3vw, 2.8rem)/1 var(--lab-display); letter-spacing: -.04em; }.lab-gallery-section-head span { font: 700 .6875rem/1 var(--lab-data); letter-spacing: .08em; color: var(--lab-muted); }
+.lab-gallery-list { border: 1px solid var(--lab-ink); margin-top: 24px; }
+.lab-gallery-card { display: grid; grid-template-columns: minmax(320px, .78fr) minmax(0, 1.22fr); min-width: 0; min-height: clamp(340px, 31vw, 450px); background: var(--lab-panel); }.lab-gallery-card + .lab-gallery-card { border-top: 1px solid var(--lab-ink); }
+.lab-gallery-card__copy { display: flex; flex-direction: column; padding: clamp(24px, 3.2vw, 44px); }.lab-gallery-card__top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.lab-gallery-card__number, .lab-gallery-card__key, .lab-badge { font: 800 .6875rem/1 var(--lab-data); letter-spacing: .12em; }.lab-badge { padding: 6px 8px; border: 1px solid var(--lab-line); color: var(--lab-muted); }.lab-badge--accent { border-color: transparent; background: var(--lab-accent); color: var(--lab-ink); }
+.lab-gallery-card h3 { max-width: 12ch; margin: clamp(28px, 4vw, 56px) 0 14px; font: 400 clamp(2rem, 3.45vw, 3.7rem)/.92 var(--lab-display); letter-spacing: -.055em; }.lab-gallery-card p { max-width: 34ch; margin: 0; color: var(--lab-muted); font-size: .9375rem; }
+.lab-gallery-card__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: auto; padding-top: 30px; }.lab-gallery-action { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 15px; border: 1px solid var(--lab-ink); font-size: .75rem; font-weight: 800; text-decoration: none; }.lab-gallery-action--primary { background: var(--lab-ink); color: var(--lab-panel); }.lab-gallery-action:hover { background: var(--lab-accent); color: var(--lab-ink); }
+.lab-gallery-card__key { margin-left: auto; color: var(--lab-muted); }.lab-gallery-card__media { position: relative; display: block; min-height: 0; overflow: hidden; background: var(--lab-ink); }
+.lab-gallery-footer { display: flex; justify-content: space-between; gap: 24px; padding: 26px clamp(20px, 4vw, 64px); border-top: 1px solid var(--lab-ink); font: 700 .6875rem/1.5 var(--lab-data); letter-spacing: .06em; color: var(--lab-muted); }.lab-gallery-footer a { text-underline-offset: 4px; }
+@media (max-width: 980px) { .lab-gallery-intro { grid-template-columns: 1fr; gap: 42px; }.lab-gallery-intro p:not(.lab-eyebrow) { margin-top: 22px; }.lab-gallery-hero { width: 100%; aspect-ratio: 16 / 9; }.lab-gallery-card { grid-template-columns: minmax(280px, .8fr) minmax(0, 1.2fr); } }
+@media (max-width: 700px) { .lab-site-header { min-height: 56px; gap: 12px; padding-inline: 16px; }.lab-site-links { flex: none; gap: 12px; font-size: .625rem; letter-spacing: .04em; white-space: nowrap; }.lab-site-links a:first-child { display: none; }.lab-gallery-main { padding-top: 48px; padding-bottom: 64px; }.lab-gallery-intro { gap: 34px; }.lab-gallery-hero { grid-template-columns: 1.25fr .75fr; aspect-ratio: 1; }.lab-gallery-section-head { align-items: start; flex-direction: column; }.lab-gallery-section-head span { line-height: 1.5; }.lab-gallery-card { grid-template-columns: 1fr; min-height: 0; }.lab-gallery-card__copy { min-height: 320px; }.lab-gallery-card__media { aspect-ratio: 16 / 10; }.lab-gallery-card__key { margin-left: 0; }.lab-gallery-footer { flex-direction: column; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; }.lab-gallery-hero__item img, .lab-gallery-card__media img { transition: none; } }

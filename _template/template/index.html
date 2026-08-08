@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>审美分享-{{NN}} · {{TITLE}}</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23191a17'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%23c9f719'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="ui-shell.css">
+<style>
+  /* 只在这里写本期作品专属样式；通用菜单样式由 Formula Lab Shell 提供。 */
+  .demo-artwork {
+    width:min(64vmin,680px);aspect-ratio:4/5;display:grid;place-items:end start;
+    padding:clamp(24px,5vmin,56px);color:var(--lab-stage-ink);
+    border:1px solid var(--lab-stage-rule);
+    background:
+      linear-gradient(135deg,transparent 49.7%,var(--lab-accent) 50% 58%,transparent 58.3%),
+      var(--lab-stage-bg);
+  }
+  .demo-artwork strong{max-width:9ch;font:400 clamp(42px,8vmin,96px)/.86 var(--lab-font-display);letter-spacing:-.065em}
+</style>
+</head>
+<body class="lab-app">
+  <a class="lab-skip-link" href="#lab-canvas">跳到画布</a>
+
+  <aside class="lab-panel" id="control-panel" aria-label="{{TITLE}} 参数面板">
+    <header class="lab-panel__header">
+      <div class="lab-edition">FORMULA / {{NN}}</div>
+      <h1>{{TITLE}}</h1>
+      <p>用一句话说明这个工具做什么，以及用户从哪里开始。</p>
+    </header>
+
+    <div class="lab-panel__scroll">
+      <section class="lab-section" aria-labelledby="content-title">
+        <div class="lab-section__heading">
+          <span>01</span><h2 id="content-title">内容</h2>
+        </div>
+        <div class="lab-field">
+          <label for="demo-text">标题</label>
+          <input id="demo-text" type="text" value="MAKE THE RULE VISIBLE">
+        </div>
+      </section>
+
+      <section class="lab-section" aria-labelledby="form-title">
+        <div class="lab-section__heading">
+          <span>02</span><h2 id="form-title">构图</h2>
+        </div>
+        <div class="lab-control-row">
+          <label for="demo-scale">尺寸</label>
+          <input id="demo-scale" type="range" min="40" max="100" value="72">
+          <output for="demo-scale">72%</output>
+        </div>
+        <label class="lab-check"><input type="checkbox" checked> 显示辅助线</label>
+      </section>
+    </div>
+
+    <footer class="lab-panel__actions lab-panel__actions--three-up">
+      <button class="lab-action lab-action--accent" type="button"><span>生成</span><small>应用当前参数</small></button>
+      <button class="lab-action" type="button"><span>重置</span><small>回到默认值</small></button>
+      <button class="lab-action" type="button"><span>导出</span><small>PNG</small></button>
+    </footer>
+  </aside>
+
+  <button class="lab-panel-toggle" type="button" data-lab-panel-toggle aria-controls="control-panel" aria-expanded="true">
+    <span aria-hidden="true">←</span>
+  </button>
+
+  <main class="lab-stage" id="lab-canvas">
+    <header class="lab-stage__header">
+      <a class="lab-stage__id lab-gallery-link" href="../../" aria-label="返回全部实验"><i></i><span>全部实验</span></a>
+      <div class="lab-stage__meta"><span>4:5</span><span>READY</span></div>
+    </header>
+    <div class="lab-stage__body">
+      <div class="demo-artwork"><strong>{{TITLE}}</strong></div>
+    </div>
+  </main>
+
+  <script src="ui-shell.js"></script>
+  <script>
+    // 本期核心实现从这里开始。
+  </script>
+</body>
+</html>
