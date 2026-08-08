@@ -1,96 +1,77 @@
 <div align="center">
 
-# 审美分享 × 可复用视觉实验
+# Formulasearch Aesthetic Formulas
 
-把每天的审美观察，复刻成可以直接体验、下载和改造的视觉工具。
+把日常的审美观察，做成可直接体验、下载和改造的浏览器视觉工具。
 
-[浏览全部项目](https://fanzr-arch.github.io/Phil-aesthetic-formulas/) · [关注 X / @Formulasearch](https://x.com/Formulasearch) · [Formula Lab Shell](UI_SHELL.md)
+[浏览全部项目](https://fanzr-arch.github.io/Phil-aesthetic-formulas/) · [关注 X / @Formulasearch](https://x.com/Formulasearch) · [UI Kit 文档](tools/formula-lab/README.md)
 
 </div>
 
-## 最新项目
+## 现在有什么
 
-<a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/008-ascii-signal/template/">
-  <img src="008-ascii-signal/preview.svg" alt="ASCII Signal 图片转字符画工具" width="100%">
-</a>
+本仓库当前发布 4 个可独立运行的 HTML / CSS / JavaScript 视觉实验。无需后端；每个项目的 `template/` 都包含它运行所需的本地资源，可部署到 GitHub Pages、任意静态站点，或直接离线打开。
 
-### 08 · ASCII Signal · 图片转字符画
+[![ASCII Signal · 图片转字符画](008-ascii-signal/preview.svg)](https://fanzr-arch.github.io/Phil-aesthetic-formulas/008-ascii-signal/template/)
 
-上传一张图片，按亮度将它转换成可复制的真实字符画。支持字符密度、对比、反相和字符表切换，处理不离开浏览器。
+| 编号 | 实验 | 能做什么 | 在线体验 |
+| --- | --- | --- | --- |
+| 008 | [ASCII Signal · 图片转字符画](008-ascii-signal/) | 将图片按亮度转换为可复制的字符画，支持密度、对比度、反相与字符集。 | [打开工具](https://fanzr-arch.github.io/Phil-aesthetic-formulas/008-ascii-signal/template/) |
+| 007 | [虹彩液态 · RGB 网点](007-iridescent-flow-halftone/) | 可交互的 WebGL 液态色彩与 RGB 半调视觉，支持实时参数调整。 | [打开工具](https://fanzr-arch.github.io/Phil-aesthetic-formulas/007-iridescent-flow-halftone/template/) |
+| 006 | [模块网格拼贴海报](006-grid-collage-poster/) | 把文字与图片编入模块网格，生成可复现、可导出的海报版式。 | [打开工具](https://fanzr-arch.github.io/Phil-aesthetic-formulas/006-grid-collage-poster/template/) |
+| 005 | [故障艺术 · 文字肖像](005-typographic-portrait/) | 用文字密度、动态模糊和失焦关系重绘照片。 | [打开工具](https://fanzr-arch.github.io/Phil-aesthetic-formulas/005-typographic-portrait/template/) |
 
-[**在线体验**](https://fanzr-arch.github.io/Phil-aesthetic-formulas/008-ascii-signal/template/) · [查看项目说明](008-ascii-signal/)
+桌面端画廊支持 `1` 至 `4` 快捷键打开对应项目；每个工具顶部的 **ALL PROJECTS** 都可返回画廊。
 
-## 全部实验
+## 固定的 Formula Lab UI Kit
 
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/008-ascii-signal/template/">
-        <img src="008-ascii-signal/preview.svg" alt="ASCII Signal 图片转字符画工具" width="100%">
-      </a>
-      <br><sub>FORMULA / 008</sub>
-      <h3>ASCII Signal · 图片转字符画</h3>
-      <p>把任意图片压缩成可复制的真实字符画；本地处理，适合 README、终端与社交图像。</p>
-      <p><a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/008-ascii-signal/template/"><strong>在线体验</strong></a> · <a href="008-ascii-signal/">项目说明</a></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/006-grid-collage-poster/template/">
-        <img src="006-grid-collage-poster/preview.png" alt="模块网格拼贴海报作品" width="100%">
-      </a>
-      <br><sub>FORMULA / 006</sub>
-      <h3>模块网格拼贴海报</h3>
-      <p>把文字与图片编入模块网格，快速生成可复现、可导出的海报版式。</p>
-      <p><a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/006-grid-collage-poster/template/"><strong>在线体验</strong></a> · <a href="006-grid-collage-poster/">项目说明</a></p>
-    </td>
-    <td width="50%" valign="top">
-      <a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/005-typographic-portrait/template/">
-        <img src="005-typographic-portrait/preview.png" alt="故障文字肖像作品" width="100%">
-      </a>
-      <br><sub>FORMULA / 005</sub>
-      <h3>故障艺术 × 文字肖像</h3>
-      <p>用文字密度、动态模糊和失焦关系重绘照片，也可把效果嵌入自己的网页。</p>
-      <p><a href="https://fanzr-arch.github.io/Phil-aesthetic-formulas/005-typographic-portrait/template/"><strong>在线体验</strong></a> · <a href="005-typographic-portrait/">项目说明</a></p>
-    </td>
-  </tr>
-</table>
+工具的作品视觉可以变化，但操作界面不再每个项目重新设计。公共源位于 [`tools/formula-lab/`](tools/formula-lab/)，每个已发布项目保存一份本地快照，因此既统一又不会让旧项目被后续更新意外改坏。
 
-> 在在线画廊中点击缩略图即可进入工具；桌面端也可以按 `1`、`2`、`3` 快速打开不同项目。每个工具顶部都有 `ALL PROJECTS`，可以随时返回画廊。
+固定组件包括：
 
-## 这里有什么
+- 控制面板、分组标题和字段标签
+- 输入框、分段选择器、复选项和按钮操作区
+- 画布舞台、状态提示、抽屉开关和可访问对话框
+- 桌面与移动端布局、键盘焦点、`Escape` 关闭和低动态偏好
 
-| 类型 | 用途 | 适合什么内容 |
-|---|---|---|
-| **代码模板** | 零构建、离线可用的 HTML/CSS/JS 工具 | 界面交互、生成器、排版布局 |
-| **Skill** | 把视觉风格拆成稳定规则，输入主题即可生成成品提示词 | 图像风格、视觉语言、封面与海报 |
+动效也遵循同一规则：点击反馈为 160–180ms，抽屉为 240ms 的 `transform` 过渡；系统启用“减少动态效果”时，非必要动画会关闭，007 的实时渲染默认暂停。详见 [UI Kit 说明](tools/formula-lab/README.md) 与 [Shell 使用规范](UI_SHELL.md)。
 
-## 怎么拿走
+## 仓库结构
 
-### 使用代码模板
+```text
+tools/formula-lab/                  # UI Kit 的唯一公共源、画廊和校验脚本
+_template/                          # 新实验的起点，包含当前 UI Kit 本地快照
+005-typographic-portrait/template/  # 已发布项目及其独立运行快照
+006-grid-collage-poster/template/
+007-iridescent-flow-halftone/template/
+008-ascii-signal/template/
+```
 
-1. 在上方选择项目并点击「在线体验」。
-2. 下载对应项目文件夹，双击打开 `template/index.html`。
-3. 修改项目自己的参数、文案和画布逻辑；通用菜单由 Formula Lab Shell 提供。
+## 使用与维护
 
-所有运行资源都放在项目自己的 `template/` 内，使用相对路径，不依赖 CDN。项目可以部署到 GitHub Pages、个人网站任意子目录，也可以离线打开。
+### 使用现成工具
 
-### 使用 Skill
+1. 在上表中打开在线工具，或下载对应项目文件夹。
+2. 双击 `template/index.html` 即可本地使用。
+3. 在项目自己的 JavaScript、文案和画布逻辑中做改造；通用界面资源已经随 `template/` 一起提供。
 
-把项目中的 `skill/` 文件夹复制到你的 Skills 目录，并按该项目 README 中的触发方式使用。
+### 新建或维护实验
 
-## 统一工具界面
+1. 从 [`_template/`](./_template/) 创建项目，保留其中的 `template/` UI 快照。
+2. 需要更新统一界面时，先修改 [`tools/formula-lab/`](tools/formula-lab/)，再明确执行同步，而不是在各项目里各写一套。
+3. 发布前运行：
 
-所有交互型项目使用 [Formula Lab Shell](UI_SHELL.md)：
+   ```powershell
+   .\tools\check-lab-ui.ps1 -Strict
+   ```
 
-- 固定参数面板、分组、动作区、画布状态栏和移动端收起方式
-- 每一期可以独立改变颜色、字体、控件和作品视觉
-- 新项目从 `_template/` 创建，自动获得当前 Shell 的本地快照
-- 已发布项目默认冻结，不会被后续 Shell 更新意外改变
+   该检查会校验快照一致性、公共组件标记和动效限制。
 
-## 发布范围
+## 开源与第三方说明
 
-公开仓库只保留可以直接预览、下载或复用的最终版本。制作过程、内部策略、研究素材、原始输入和草稿不进入公开仓库。
+项目代码和各项目的许可说明在对应目录中。公共 UI Kit 的第三方依赖与归属见 [THIRD_PARTY_NOTICES.md](tools/formula-lab/THIRD_PARTY_NOTICES.md)；007 的 WebGL 相关说明见其 [项目目录](007-iridescent-flow-halftone/)。
+
+公开仓库只保留可直接预览、下载或复用的最终成果；制作过程、内部研究材料和草稿不纳入发布内容。
 
 ---
 
