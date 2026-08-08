@@ -1,4 +1,4 @@
-# Formula Lab UI Kit v2.1
+# Formula Lab UI Kit v3.0
 
 Formula Lab UI Kit 是本仓库所有交互型审美工具的统一组件包。它固定操作习惯、控件层级、响应式行为和用语，不固定作品风格。
 
@@ -12,6 +12,7 @@ Formula Lab UI Kit 是本仓库所有交互型审美工具的统一组件包。�
 template/
 ├─ index.html
 ├─ ui-shell.css
+├─ v3-shell.css
 ├─ ui-shell.js
 ├─ lab-tokens.css
 └─ 本期引擎与素材文件
@@ -65,6 +66,17 @@ FormulaLabShell.closeDialog('export-dialog');
 - `.lab-dialog` 与 `.lab-dialog__surface` 是唯一弹窗结构，必须带 `data-lab-dialog`、`hidden` 和 `aria-labelledby`。
 - 抽屉只使用 `transform`，统一 `240ms var(--lab-ease-drawer)`；点击与颜色反馈统一 `160–180ms`。
 - hover 位移只允许在 `(hover: hover) and (pointer: fine)` 下出现。减弱动态时取消位移和持续运动，但保留必要的颜色与透明度反馈。
+
+## v3 视觉验收规则
+
+- 标题、正文、字段名称和按钮用语保持统一；删除对操作没有帮助的说明文字。
+- 控件数值与单位必须单行显示；优先缩短单位，再使用 `white-space: nowrap`，不得让数值列折行。
+- 选中、悬浮、键盘焦点是三种不同状态：深色实底只表示当前选中，悬浮使用浅色反馈，焦点使用清晰轮廓。
+- 分段按钮、色彩控件及其文字按组件规则水平、垂直对齐，不使用临时偏移修正。
+- 面板收起按钮位于面板画布内部，不越过菜单边界，不添加底部阴影。
+- 舞台使用全屏细线坐标网格；作品画板按可用宽高完整缩放，任何比例都不能被裁切。
+- 作品阴影必须留有安全边距并自然衰减，不能被舞台容器的 `overflow` 截断。
+- 每次修改后至少复核桌面端、窄屏、面板展开/收起、悬浮/选中状态与画板极端比例。
 
 ## 主题变量
 

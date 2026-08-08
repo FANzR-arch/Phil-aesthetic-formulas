@@ -6,7 +6,7 @@ param(
 
 $repo = Split-Path -Parent $PSScriptRoot
 $source = Join-Path $repo 'tools\formula-lab'
-$files = @('ui-shell.css', 'ui-shell.js', 'lab-tokens.css')
+$files = @('ui-shell.css', 'ui-shell.js', 'lab-tokens.css', 'v3-shell.css')
 
 if (-not (Test-Path (Join-Path $source 'ui-shell.css'))) { throw "Missing Formula Lab source: $source" }
 if (-not $All -and -not $Issue) { throw 'Pass -All or one or more -Issue folder names. Existing releases are only changed explicitly.' }

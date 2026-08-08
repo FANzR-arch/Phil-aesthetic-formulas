@@ -110,8 +110,10 @@
     body.panel-collapsed canvas#out{max-height:calc(100vh - 88px)}
   }
 </style>
+<link rel="stylesheet" href="v3-shell.css?v=1">
+<link rel="stylesheet" href="v3-theme.css?v=2">
 </head>
-<body class="lab-app">
+<body class="lab-app" data-v3-first-group="内容">
   <a class="lab-skip-link" href="#stage">跳到画布</a>
   <aside class="lab-panel side" id="control-panel" aria-label="网格拼贴参数面板">
     <header class="lab-panel__header">
@@ -212,13 +214,6 @@ OUT</textarea>
       <input type="text" id="seed" spellcheck="false" inputmode="numeric">
     </div>
 
-    <div class="foot" id="hint">
-      拖多张图片进来按顺序填格<br>
-      拖到某一格上 = 从那格开始填<br>
-      点画布 = 换一批排布<br><br>
-      <a href="https://x.com/Formulasearch" target="_blank">@Formulasearch</a> ·
-      <a href="https://github.com/FANzR-arch/Phil-aesthetic-formulas" target="_blank">仓库</a>
-    </div>
     </div></div>
 
     <footer class="lab-panel__actions lab-panel__actions--two-up app-actions">
@@ -259,6 +254,7 @@ OUT</textarea>
 
 <script src="grid-collage.js"></script>
 <script src="ui-shell.js"></script>
+<script src="v3-normalize.js?v=1"></script>
 <script>
 'use strict';
 
@@ -304,7 +300,7 @@ function apply(patch){ g.setOptions(patch); syncStats(); }
 const fmt = {
   cols: v => v + ' 列', margin: v => v.toFixed(1) + ' 格',
   gridAlpha: v => Math.round(v * 100) + '%',
-  fontSize: v => v.toFixed(2) + '× 格', lineHeight: v => v.toFixed(2),
+  fontSize: v => v.toFixed(2) + '×', lineHeight: v => v.toFixed(2),
   tracking: v => (v * 100).toFixed(1) + '%', textPad: v => v + ' 格',
   tiles: v => v + ' 块', logoRatio: v => Math.round(v * 100) + '%',
   tileGutter: v => v + ' 格', bleed: v => v + ' 块',

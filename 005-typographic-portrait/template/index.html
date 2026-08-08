@@ -95,8 +95,10 @@
     body.panel-collapsed canvas#out{max-height:calc(100vh - 88px)}
   }
 </style>
+<link rel="stylesheet" href="v3-shell.css?v=1">
+<link rel="stylesheet" href="v3-theme.css?v=2">
 </head>
-<body class="lab-app">
+<body class="lab-app" data-v3-first-group="输入">
   <a class="lab-skip-link" href="#stage">跳到画布</a>
   <aside class="lab-panel side" id="control-panel" aria-label="文字肖像参数面板">
     <header class="lab-panel__header">
@@ -202,6 +204,7 @@
 <script src="typo-portrait.js"></script>
 <script src="sample-image.js"></script>
 <script src="ui-shell.js"></script>
+<script src="v3-normalize.js?v=1"></script>
 <script>
 'use strict';
 
@@ -229,7 +232,7 @@ const fmt = {
   defocus: v => Math.round(v * 100) + '%', blur: v => v + 'px', angle: v => v + '°',
   contrast: v => v.toFixed(2), tint: v => Math.round(v * 100) + '%',
   intensity: v => Math.round(v * 100) + '%',
-  speed: v => (7 * v).toFixed(1) + ' 次/秒',
+  speed: v => (7 * v).toFixed(1) + ' Hz',
 };
 for (const id of SLIDERS){
   const el = $(id), o = $('o-' + id);

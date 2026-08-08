@@ -1,7 +1,7 @@
-# Formula Lab UI Kit v2.1
+# Formula Lab UI Kit v3.0
 
 这是本仓库唯一的 UI 源码，不是给页面在线依赖的全局框架。每期发布时，
-`ui-shell.css`、`ui-shell.js` 和 `lab-tokens.css` 都会复制到该期的
+`ui-shell.css`、`ui-shell.js`、`lab-tokens.css` 和 `v3-shell.css` 都会复制到该期的
 `template/`，因此下载单期文件夹、GitHub Pages 子路径和 `file://` 都可靠。
 
 ## 固定组件
@@ -28,10 +28,14 @@
 覆盖颜色、字体、画布比例和舞台视觉，但不要改变上述组件的层级、焦点样式和
 移动端收起逻辑。
 
+`v3-shell.css` 固定标题层级、控件节奏、单行数值、选中/悬浮状态、画板缩放与
+坐标网格。`v3-normalize.js` 只用于 005、006 这类旧结构适配，新项目不得依赖它；
+新项目必须直接使用标准组件类。完整验收规则见仓库根目录的 `UI_SHELL.md`。
+
 ## 日常操作
 
 ```powershell
-# 新一期自动带 v2 本地快照
+# 新一期自动带 v3 本地快照
 .\tools\new-issue.ps1 -Number 9 -Slug example -Title "示例工具"
 
 # 明确要升级已发布工具时，才同步全部本地快照

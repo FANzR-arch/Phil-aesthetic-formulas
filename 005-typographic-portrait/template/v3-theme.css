@@ -1,0 +1,28 @@
+:root {
+  --v3-accent: oklch(84% .17 108);
+  --v3-accent-deep: oklch(46% .10 108);
+  --v3-stage: oklch(18% .012 98);
+  --v3-stage-ink: oklch(93% .01 92);
+  --v3-stage-line: oklch(93% .01 92 / .085);
+  --v3-stage-accent: var(--v3-accent);
+}
+
+.lab-stage__body::after {
+  opacity: .62;
+  background-size: 18px 18px, 18px 18px, 90px 90px, 90px 90px;
+}
+
+canvas#out {
+  background: #fff;
+  border-color: oklch(100% 0 0 / .16);
+  box-shadow:
+    0 1px 2px oklch(0% 0 0 / .22),
+    0 18px 42px -16px oklch(0% 0 0 / .44),
+    0 42px 92px -32px oklch(0% 0 0 / .52);
+}
+
+.lab-stage__meta span:last-child { color: var(--v3-accent); }
+
+@media (max-width: 760px) {
+  .lab-stage__body::after { background-size: 14px 14px, 14px 14px, 70px 70px, 70px 70px; }
+}

@@ -3,7 +3,7 @@ param([switch]$Strict)
 
 $repo = Split-Path -Parent $PSScriptRoot
 $source = Join-Path $repo 'tools\formula-lab'
-$required = @('ui-shell.css', 'ui-shell.js', 'lab-tokens.css')
+$required = @('ui-shell.css', 'ui-shell.js', 'lab-tokens.css', 'v3-shell.css')
 $errors = [System.Collections.Generic.List[string]]::new()
 $warnings = [System.Collections.Generic.List[string]]::new()
 $targets = @((Join-Path $repo '_template\template'))
